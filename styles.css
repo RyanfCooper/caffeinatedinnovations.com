@@ -225,7 +225,10 @@ h3 {
 }
 
 .app-card {
-  display: block;
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 22px;
+  align-items: center;
   max-width: 850px;
   padding: 24px;
   border: 1px solid var(--line);
@@ -233,21 +236,30 @@ h3 {
   background: var(--white);
 }
 
-.app-card p,
-.company-copy p {
-  color: var(--muted);
+.app-icon {
+  display: block;
+  width: 96px;
+  height: 96px;
+  border-radius: 8px;
+  box-shadow: 0 12px 28px rgba(23, 32, 28, 0.14);
 }
 
+.app-copy,
 .company-copy {
   min-width: 0;
 }
 
-.app-card p {
+.app-copy p,
+.company-copy p {
+  color: var(--muted);
+}
+
+.app-copy p {
   max-width: 650px;
   margin-bottom: 14px;
 }
 
-.app-card a,
+.app-copy a,
 .company-copy a,
 footer a {
   color: var(--blue);
@@ -327,6 +339,11 @@ footer {
   .hero-actions {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .app-card {
+    grid-template-columns: 1fr;
+    align-items: start;
   }
 
   .hero-copy,
