@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=600, height=600, initial-scale=1.0, user-scalable=no">
+<title>Lens Arcade</title>
+<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M8AAAMCAYAAAClcKCpAAAAAElFTkSuQmCC">
+<style>
+  /* ---- Additive-display palette: black = transparent, bright lines = visible ---- */
+  :root {
+    --bg: #000000;
+    --ink: #eafcff;
+    --dim: #4a7d86;
+    --cyan: #00e5ff;
+    --lime: #6dff5a;
+    --amber: #ffc24b;
+    --pink: #ff5ea8;
+    --focus: #00e5ff;
+    --font: 'Courier New', ui-monospace, monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 600px;
+    height: 600px;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font);
+    -webkit-font-smoothing: none;
+  }
+
+  #app { position: relative; width: 600px; height: 600px; }
+
+  .screen { position: absolute; inset: 0; display: none; }
+  .screen.active { display: block; }
+
+  /* ---------- Launcher ---------- */
+  #launcher { padding: 28px 40px 20px; display: flex; flex-direction: column; }
+
+  .brand {
+    font-size: 20px; letter-spacing: 8px; color: var(--dim);
+    text-transform: uppercase; margin-bottom: 4px;
+  }
+  .title {
+    font-size: 48px; font-weight: bold; letter-spacing: 4px;
+    color: var(--cyan); text-shadow: 0 0 18px rgba(0,229,255,.45);
+    margin-bottom: 22px;
+  }
+
+  .menu { display: flex; flex-direction: column; gap: 12px; flex: 1; justify-content: center; }
+
+  .focusable {
+    transition: all 120ms ease;
+    border: 2px solid transparent;
+    outline: none;
+    cursor: pointer;
+    background: transparent;
+    color: var(--ink);
+    font-family: var(--font);
+  }
+
+  .game-row {
+    display: flex; align-items: center; gap: 18px;
+    min-height: 80px;
+    padding: 0 20px;
+    border-radius: 14px;
+    border: 2px solid var(--dim);
+    width: 100%; box-sizing: border-box;
+  }
+  .game-row .glyph { font-size: 36px; width: 44px; text-align: center; flex-shrink: 0; }
+  .game-row .label { font-size: 28px; letter-spacing: 2px; }
+  .game-row .hi { font-size: 15px; color: var(--dim); margin-left: auto; letter-spacing: 1px; flex-shrink: 0; }
+
+  .focusable:focus {
+    border-color: var(--focus);
+    box-shadow: 0 0 24px rgba(0,229,255,.4);
+    background: rgba(0,229,255,.06);
+  }
+  .focusable:focus .label { color: var(--cyan); }
+
+  .hint {
+    font-size: 15px; color: var(--dim); letter-spacing: 2px; text-align: center;
+    margin-top: 16px; flex-shrink: 0;
+  }
+
+  /* ---------- Generic game chrome ---------- */
+  .game-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 28px 40px 12px;
+  }
+  .game-name { font-size: 24px; letter-spacing: 4px; color: var(--dim); text-transform: uppercase; }
+  .score { font-size: 30px; color: var(--amber); letter-spacing: 2px; }
+
+  .stage { display: flex; align-items: center; justify-content: center; height: 440px; }
+  canvas { display: block; }
+
+  .overlay {
+    position: absolute; inset: 0;
+    display: none; flex-direction: column;
+    align-items: center; justify-content: center; gap: 18px;
+    background: #000;
+    z-index: 10;
+  }
+  .overlay.show { display: flex; }
+  /* When an overlay is up, suppress anything underneath that could bleed through
+     the gaps between buttons (start prompts, footer hints). */
+  .screen:has(.overlay.show) #react-msg,
+  .screen:has(.overlay.show) .simon-center,
+  .screen:has(.overlay.show) .hint { visibility: hidden; }
+  .overlay .big { font-size: 44px; color: var(--pink); letter-spacing: 4px; text-shadow: 0 0 18px rgba(255,94,168,.5); }
+  .overlay .sub { font-size: 20px; color: var(--ink); letter-spacing: 2px; }
+  .btn {
+    min-height: 88px; padding: 0 40px;
+    border: 2px solid var(--dim); border-radius: 14px;
+    font-size: 26px; letter-spacing: 3px; color: var(--ink);
+    display: flex; align-items: center; gap: 14px;
+  }
+
+  /* 2048 grid */
+  #g2048-grid {
+    display: grid; grid-template-columns: repeat(4, 96px); grid-template-rows: repeat(4, 96px);
+    gap: 12px;
+  }
+  .tile {
+    width: 96px; height: 96px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 38px; font-weight: bold;
+    border: 2px solid #143b40; color: var(--dim);
+  }
+  .tile[data-v]:not([data-v="0"]) { border-color: var(--cyan); color: var(--cyan); text-shadow: 0 0 12px rgba(0,229,255,.4); }
+  .tile[data-v="0"] { color: transparent; }
+
+  /* Simon pads */
+  #simon-pad-grid { position: relative; width: 360px; height: 360px; }
+  .pad {
+    position: absolute; width: 168px; height: 168px; border: 3px solid; border-radius: 18px;
+    opacity: .28; transition: opacity 90ms ease;
+  }
+  .pad.lit { opacity: 1; box-shadow: 0 0 40px currentColor; }
+  .pad.p0 { top: 0; left: 0; color: var(--cyan); border-color: var(--cyan); }
+  .pad.p1 { top: 0; right: 0; color: var(--lime); border-color: var(--lime); }
+  .pad.p2 { bottom: 0; left: 0; color: var(--amber); border-color: var(--amber); }
+  .pad.p3 { bottom: 0; right: 0; color: var(--pink); border-color: var(--pink); }
+  .simon-center {
+    position: absolute; inset: 0; margin: auto; width: 120px; height: 60px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; letter-spacing: 2px; color: var(--dim);
+  }
+
+  /* Reaction */
+  #react-field { position: relative; width: 440px; height: 380px; border: 2px solid #143b40; border-radius: 16px; }
+  #target {
+    position: absolute; width: 76px; height: 76px; border-radius: 50%;
+    border: 3px solid var(--lime); color: var(--lime);
+    display: none; align-items: center; justify-content: center; font-size: 30px;
+    box-shadow: 0 0 32px rgba(109,255,90,.5);
+  }
+  #react-msg { position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-size: 22px; color: var(--dim); letter-spacing: 2px; text-align:center; pointer-events:none; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ===== LAUNCHER ===== -->
+  <section id="launcher" class="screen active">
+    <div class="brand">Lens</div>
+    <div class="title">ARCADE</div>
+    <div class="menu" id="menu">
+      <button class="focusable game-row" data-game="snake">
+        <span class="glyph" style="color:var(--lime)">⌁</span>
+        <span class="label">Snake</span>
+        <span class="hi" id="hi-snake">HI 0</span>
+      </button>
+      <button class="focusable game-row" data-game="g2048">
+        <span class="glyph" style="color:var(--cyan)">▦</span>
+        <span class="label">2048</span>
+        <span class="hi" id="hi-g2048">HI 0</span>
+      </button>
+      <button class="focusable game-row" data-game="simon">
+        <span class="glyph" style="color:var(--amber)">◉</span>
+        <span class="label">Simon</span>
+        <span class="hi" id="hi-simon">HI 0</span>
+      </button>
+      <button class="focusable game-row" data-game="react">
+        <span class="glyph" style="color:var(--pink)">✛</span>
+        <span class="label">Reflex</span>
+        <span class="hi" id="hi-react">HI 0</span>
+      </button>
+    </div>
+    <div class="hint">SWIPE to move · PINCH to select</div>
+  </section>
+
+  <!-- ===== SNAKE ===== -->
+  <section id="snake" class="screen">
+    <div class="game-head"><span class="game-name">Snake</span><span class="score" id="snake-score">0</span></div>
+    <div class="stage"><canvas id="snake-canvas" width="440" height="440"></canvas></div>
+    <div class="overlay" id="snake-over">
+      <div class="big">GAME OVER</div>
+      <div class="sub" id="snake-final">Score 0</div>
+      <button class="focusable btn" data-act="snake-retry">↻ Retry</button>
+      <button class="focusable btn" data-act="menu">⌂ Menu</button>
+    </div>
+  </section>
+
+  <!-- ===== 2048 ===== -->
+  <section id="g2048" class="screen">
+    <div class="game-head"><span class="game-name">2048</span><span class="score" id="g2048-score">0</span></div>
+    <div class="stage"><div id="g2048-grid"></div></div>
+    <div class="overlay" id="g2048-over">
+      <div class="big" id="g2048-result">GAME OVER</div>
+      <div class="sub" id="g2048-final">Score 0</div>
+      <button class="focusable btn" data-act="g2048-retry">↻ Retry</button>
+      <button class="focusable btn" data-act="menu">⌂ Menu</button>
+    </div>
+  </section>
+
+  <!-- ===== SIMON ===== -->
+  <section id="simon" class="screen">
+    <div class="game-head"><span class="game-name">Simon</span><span class="score" id="simon-score">0</span></div>
+    <div class="stage">
+      <div id="simon-pad-grid">
+        <div class="pad p0" data-pad="0"></div>
+        <div class="pad p1" data-pad="1"></div>
+        <div class="pad p2" data-pad="2"></div>
+        <div class="pad p3" data-pad="3"></div>
+        <div class="simon-center" id="simon-center">PINCH</div>
+      </div>
+    </div>
+    <div class="overlay" id="simon-over">
+      <div class="big">MISSED</div>
+      <div class="sub" id="simon-final">Round 0</div>
+      <button class="focusable btn" data-act="simon-retry">↻ Retry</button>
+      <button class="focusable btn" data-act="menu">⌂ Menu</button>
+    </div>
+  </section>
+
+  <!-- ===== REFLEX ===== -->
+  <section id="react" class="screen">
+    <div class="game-head"><span class="game-name">Reflex</span><span class="score" id="react-score">0</span></div>
+    <div class="stage">
+      <div id="react-field">
+        <div id="target">✛</div>
+        <div id="react-msg">PINCH to start<br>Hit targets fast</div>
+      </div>
+    </div>
+    <div class="overlay" id="react-over">
+      <div class="big">TIME UP</div>
+      <div class="sub" id="react-final">Hits 0 · Avg 0ms</div>
+      <button class="focusable btn" data-act="react-retry">↻ Retry</button>
+      <button class="focusable btn" data-act="menu">⌂ Menu</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ============================================================
+   LENS ARCADE — Meta Ray-Ban Display web app
+   Input model: ArrowUp/Down/Left/Right + Enter only.
+   Display model: black is transparent; bright lines visible.
+   ============================================================ */
+
+const DPAD = { UP:'ArrowUp', DOWN:'ArrowDown', LEFT:'ArrowLeft', RIGHT:'ArrowRight', SELECT:'Enter' };
+
+const screens = {};
+document.querySelectorAll('.screen').forEach(s => screens[s.id] = s);
+let current = 'launcher';
+
+function show(id){
+  screens[current].classList.remove('active');
+  current = id;
+  screens[id].classList.add('active');
+  // focus first focusable in the new screen
+  const f = screens[id].querySelector('.focusable');
+  if (f) f.focus();
+}
+
+/* ---- high scores ---- */
+function getHi(k){ return parseInt(localStorage.getItem('hi-'+k)||'0',10); }
+function setHi(k,v){ if(v>getHi(k)){ localStorage.setItem('hi-'+k,String(v)); } refreshHi(); }
+function refreshHi(){
+  ['snake','g2048','simon','react'].forEach(k=>{
+    const el=document.getElementById('hi-'+k); if(el) el.textContent='HI '+getHi(k);
+  });
+}
+refreshHi();
+
+/* ---- launcher navigation ---- */
+const menuBtns = Array.from(document.querySelectorAll('#menu .focusable'));
+menuBtns[0].focus();
+
+/* central key router: each screen registers a handler */
+const handlers = {};
+document.addEventListener('keydown', e=>{
+  if(!Object.values(DPAD).includes(e.key)) return;
+  e.preventDefault();
+  const h = handlers[current];
+  if(h) h(e.key);
+});
+
+/* generic vertical-list focus mover (launcher + overlays) */
+function listNav(container, key){
+  const items = Array.from(container.querySelectorAll('.focusable:not(.hidden)'))
+    .filter(el => el.offsetParent !== null);
+  if(!items.length) return;
+  let idx = items.indexOf(document.activeElement);
+  if(idx===-1){ items[0].focus(); return; }
+  if(key===DPAD.UP||key===DPAD.LEFT) idx = (idx>0)?idx-1:items.length-1;
+  if(key===DPAD.DOWN||key===DPAD.RIGHT) idx = (idx<items.length-1)?idx+1:0;
+  if(key===DPAD.SELECT){ items[idx].click(); return; }
+  items[idx].focus();
+}
+
+handlers.launcher = key => {
+  if(key===DPAD.SELECT){ document.activeElement.click(); return; }
+  listNav(document.getElementById('menu'), key);
+};
+menuBtns.forEach(b=> b.addEventListener('click', ()=> launch(b.dataset.game)));
+
+/* overlay buttons (data-act) */
+document.querySelectorAll('[data-act]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const a = btn.dataset.act;
+    if(a==='menu'){ stopAll(); show('launcher'); }
+    else if(a==='snake-retry'){ startSnake(); }
+    else if(a==='g2048-retry'){ start2048(); }
+    else if(a==='simon-retry'){ startSimon(); }
+    else if(a==='react-retry'){ startReact(); }
+  });
+});
+
+function launch(game){
+  if(game==='snake'){ show('snake'); startSnake(); }
+  if(game==='g2048'){ show('g2048'); start2048(); }
+  if(game==='simon'){ show('simon'); startSimon(); }
+  if(game==='react'){ show('react'); startReact(); }
+}
+function stopAll(){ stopSnake(); stopSimon(); stopReact(); }
+
+/* ============================================================
+   SNAKE
+   ============================================================ */
+const snakeCv = document.getElementById('snake-canvas');
+const sctx = snakeCv.getContext('2d');
+const GRID = 22, CELL = 440/GRID;
+let snake, sdir, sfood, sscore, sLoop, sPending;
+
+function startSnake(){
+  document.getElementById('snake-over').classList.remove('show');
+  snake = [{x:11,y:11},{x:10,y:11},{x:9,y:11}];
+  sdir = {x:1,y:0}; sPending = sdir;
+  sscore = 0; placeFood();
+  document.getElementById('snake-score').textContent = '0';
+  clearInterval(sLoop); sLoop = setInterval(snakeTick, 130);
+  drawSnake();
+}
+function stopSnake(){ clearInterval(sLoop); }
+function placeFood(){
+  do { sfood = {x:(Math.random()*GRID)|0, y:(Math.random()*GRID)|0}; }
+  while(snake.some(s=>s.x===sfood.x&&s.y===sfood.y));
+}
+function snakeTick(){
+  sdir = sPending;
+  const head = {x:snake[0].x+sdir.x, y:snake[0].y+sdir.y};
+  if(head.x<0||head.y<0||head.x>=GRID||head.y>=GRID||snake.some(s=>s.x===head.x&&s.y===head.y)){
+    return snakeDead();
+  }
+  snake.unshift(head);
+  if(head.x===sfood.x&&head.y===sfood.y){
+    sscore+=10; document.getElementById('snake-score').textContent=sscore; placeFood();
+  } else snake.pop();
+  drawSnake();
+}
+function drawSnake(){
+  sctx.clearRect(0,0,440,440);
+  // food
+  sctx.fillStyle = '#ff5ea8'; sctx.shadowColor='#ff5ea8'; sctx.shadowBlur=14;
+  sctx.fillRect(sfood.x*CELL+3, sfood.y*CELL+3, CELL-6, CELL-6);
+  // snake
+  sctx.shadowColor='#6dff5a'; sctx.shadowBlur=10;
+  snake.forEach((s,i)=>{
+    sctx.fillStyle = i===0 ? '#eafcff' : '#6dff5a';
+    sctx.fillRect(s.x*CELL+2, s.y*CELL+2, CELL-4, CELL-4);
+  });
+  sctx.shadowBlur=0;
+}
+function snakeDead(){
+  stopSnake(); setHi('snake', sscore);
+  document.getElementById('snake-final').textContent = 'Score '+sscore;
+  const ov=document.getElementById('snake-over'); ov.classList.add('show');
+  ov.querySelector('.focusable').focus();
+}
+handlers.snake = key=>{
+  const ov=document.getElementById('snake-over');
+  if(ov.classList.contains('show')){ listNav(ov,key); return; }
+  if(key===DPAD.UP && sdir.y===0) sPending={x:0,y:-1};
+  if(key===DPAD.DOWN && sdir.y===0) sPending={x:0,y:1};
+  if(key===DPAD.LEFT && sdir.x===0) sPending={x:-1,y:0};
+  if(key===DPAD.RIGHT && sdir.x===0) sPending={x:1,y:0};
+};
+
+/* ============================================================
+   2048
+   ============================================================ */
+const gridEl = document.getElementById('g2048-grid');
+let board, g2score, g2cells=[];
+function build2048(){
+  gridEl.innerHTML='';
+  g2cells=[];
+  for(let i=0;i<16;i++){ const c=document.createElement('div'); c.className='tile'; gridEl.appendChild(c); g2cells.push(c); }
+}
+build2048();
+function start2048(){
+  document.getElementById('g2048-over').classList.remove('show');
+  board = Array(16).fill(0);
+  g2score = 0; document.getElementById('g2048-score').textContent='0';
+  addTile(); addTile(); render2048();
+}
+function addTile(){
+  const empty=[]; board.forEach((v,i)=>{ if(v===0) empty.push(i); });
+  if(!empty.length) return;
+  board[empty[(Math.random()*empty.length)|0]] = Math.random()<0.9?2:4;
+}
+function render2048(){
+  board.forEach((v,i)=>{ g2cells[i].dataset.v=v; g2cells[i].textContent=v||''; });
+  document.getElementById('g2048-score').textContent=g2score;
+}
+function slide(row){
+  let a=row.filter(v=>v);
+  for(let i=0;i<a.length-1;i++){ if(a[i]===a[i+1]){ a[i]*=2; g2score+=a[i]; a.splice(i+1,1);} }
+  while(a.length<4) a.push(0);
+  return a;
+}
+function move2048(dir){
+  const before = board.join(',');
+  let rows=[];
+  for(let r=0;r<4;r++){
+    let row=[board[r*4],board[r*4+1],board[r*4+2],board[r*4+3]];
+    if(dir==='L'){ row=slide(row); }
+    if(dir==='R'){ row=slide(row.reverse()).reverse(); }
+    rows.push(row);
+  }
+  if(dir==='L'||dir==='R'){ for(let r=0;r<4;r++) for(let c=0;c<4;c++) board[r*4+c]=rows[r][c]; }
+  if(dir==='U'||dir==='D'){
+    for(let c=0;c<4;c++){
+      let col=[board[c],board[c+4],board[c+8],board[c+12]];
+      col = dir==='U'? slide(col) : slide(col.reverse()).reverse();
+      for(let r=0;r<4;r++) board[r*4+c]=col[r];
+    }
+  }
+  if(board.join(',')!==before){ addTile(); render2048(); checkEnd2048(); }
+}
+function checkEnd2048(){
+  if(board.includes(2048)){ end2048(true); return; }
+  if(board.includes(0)) return;
+  for(let r=0;r<4;r++) for(let c=0;c<4;c++){
+    const v=board[r*4+c];
+    if(c<3&&v===board[r*4+c+1]) return;
+    if(r<3&&v===board[r*4+c+4]) return;
+  }
+  end2048(false);
+}
+function end2048(win){
+  setHi('g2048', g2score);
+  document.getElementById('g2048-result').textContent = win?'2048!':'GAME OVER';
+  document.getElementById('g2048-final').textContent = 'Score '+g2score;
+  const ov=document.getElementById('g2048-over'); ov.classList.add('show');
+  ov.querySelector('.focusable').focus();
+}
+handlers.g2048 = key=>{
+  const ov=document.getElementById('g2048-over');
+  if(ov.classList.contains('show')){ listNav(ov,key); return; }
+  if(key===DPAD.UP) move2048('U');
+  if(key===DPAD.DOWN) move2048('D');
+  if(key===DPAD.LEFT) move2048('L');
+  if(key===DPAD.RIGHT) move2048('R');
+};
+
+/* ============================================================
+   SIMON  (directional input maps to the 4 pads)
+   UP=cyan(0) RIGHT=lime(1) DOWN=amber(2... wait map clearly)
+   We map: UP->0, RIGHT->1, DOWN->2, LEFT->3 ; Enter starts.
+   ============================================================ */
+const padEls = Array.from(document.querySelectorAll('#simon-pad-grid .pad'));
+const simonCenter = document.getElementById('simon-center');
+let seq=[], simonInput=[], simonRound=0, acceptingSimon=false, simonStarted=false;
+const keyToPad = { ArrowUp:0, ArrowRight:1, ArrowDown:2, ArrowLeft:3 };
+
+function startSimon(){
+  document.getElementById('simon-over').classList.remove('show');
+  seq=[]; simonRound=0; simonStarted=false; acceptingSimon=false;
+  document.getElementById('simon-score').textContent='0';
+  simonCenter.textContent='PINCH';
+}
+function stopSimon(){ acceptingSimon=false; }
+function litPad(i){
+  return new Promise(res=>{
+    padEls[i].classList.add('lit');
+    setTimeout(()=>{ padEls[i].classList.remove('lit'); setTimeout(res,180); }, 420);
+  });
+}
+async function playSeq(){
+  acceptingSimon=false; simonCenter.textContent='WATCH';
+  await new Promise(r=>setTimeout(r,500));
+  for(const i of seq){ await litPad(i); }
+  simonCenter.textContent='YOUR TURN';
+  simonInput=[]; acceptingSimon=true;
+}
+function nextSimonRound(){
+  simonRound++;
+  document.getElementById('simon-score').textContent=simonRound;
+  seq.push((Math.random()*4)|0);
+  playSeq();
+}
+function simonMiss(){
+  acceptingSimon=false; setHi('simon', simonRound-1>0?simonRound-1:0);
+  document.getElementById('simon-final').textContent='Round '+simonRound;
+  const ov=document.getElementById('simon-over'); ov.classList.add('show');
+  ov.querySelector('.focusable').focus();
+}
+handlers.simon = key=>{
+  const ov=document.getElementById('simon-over');
+  if(ov.classList.contains('show')){ listNav(ov,key); return; }
+  if(!simonStarted){
+    if(key===DPAD.SELECT){ simonStarted=true; nextSimonRound(); }
+    return;
+  }
+  if(!acceptingSimon) return;
+  if(key===DPAD.SELECT) return;
+  const pad = keyToPad[key];
+  if(pad===undefined) return;
+  padEls[pad].classList.add('lit'); setTimeout(()=>padEls[pad].classList.remove('lit'),160);
+  simonInput.push(pad);
+  const idx=simonInput.length-1;
+  if(simonInput[idx]!==seq[idx]){ return simonMiss(); }
+  if(simonInput.length===seq.length){ acceptingSimon=false; setTimeout(nextSimonRound,650); }
+};
+
+/* ============================================================
+   REFLEX  (target appears; press the matching direction)
+   Each target sits in one of 4 zones; press that arrow fast.
+   ============================================================ */
+const reactField=document.getElementById('react-field');
+const targetEl=document.getElementById('target');
+const reactMsg=document.getElementById('react-msg');
+let reactActive=false, reactHits, reactTimes, reactStarted, reactTimer, reactSpawnAt, reactZone;
+const zonePos = [ {l:30,t:30}, {l:330,t:30}, {l:30,t:270}, {l:330,t:270} ]; // UP,RIGHT,DOWN,LEFT order
+const zoneKey = { ArrowUp:0, ArrowRight:1, ArrowDown:2, ArrowLeft:3 };
+const REACT_TIME = 30000;
+
+function startReact(){
+  document.getElementById('react-over').classList.remove('show');
+  reactHits=0; reactTimes=[]; reactStarted=false; reactActive=false;
+  document.getElementById('react-score').textContent='0';
+  targetEl.style.display='none';
+  reactMsg.style.display='flex';
+  reactMsg.innerHTML='PINCH to start<br>Match the arrow to the target';
+}
+function stopReact(){ reactActive=false; clearTimeout(reactTimer); clearTimeout(reactSpawnAt); }
+function spawnTarget(){
+  reactZone = (Math.random()*4)|0;
+  const p = zonePos[reactZone];
+  targetEl.style.left=p.l+'px'; targetEl.style.top=p.t+'px';
+  targetEl.style.display='flex';
+  reactSpawnAt = performance.now();
+}
+function reactBegin(){
+  reactStarted=true; reactActive=true; reactMsg.style.display='none';
+  spawnTarget();
+  reactTimer = setTimeout(endReact, REACT_TIME);
+}
+function endReact(){
+  reactActive=false; targetEl.style.display='none';
+  const avg = reactTimes.length? Math.round(reactTimes.reduce((a,b)=>a+b,0)/reactTimes.length):0;
+  setHi('react', reactHits);
+  document.getElementById('react-final').textContent='Hits '+reactHits+' · Avg '+avg+'ms';
+  const ov=document.getElementById('react-over'); ov.classList.add('show');
+  ov.querySelector('.focusable').focus();
+}
+handlers.react = key=>{
+  const ov=document.getElementById('react-over');
+  if(ov.classList.contains('show')){ listNav(ov,key); return; }
+  if(!reactStarted){ if(key===DPAD.SELECT) reactBegin(); return; }
+  if(!reactActive) return;
+  const z = zoneKey[key];
+  if(z===undefined) return;
+  if(z===reactZone){
+    reactTimes.push(Math.round(performance.now()-reactSpawnAt));
+    reactHits++; document.getElementById('react-score').textContent=reactHits;
+    targetEl.style.display='none';
+    clearTimeout(reactSpawnAt);
+    setTimeout(spawnTarget, 250 + Math.random()*400);
+  }
+};
+
+</script>
+</body>
+</html>

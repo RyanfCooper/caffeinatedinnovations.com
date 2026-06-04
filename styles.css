@@ -244,6 +244,23 @@ h3 {
   box-shadow: 0 12px 28px rgba(23, 32, 28, 0.14);
 }
 
+.app-mark {
+  display: grid;
+  width: 96px;
+  height: 96px;
+  place-items: center;
+  border: 1px solid #173f35;
+  border-radius: 8px;
+  color: #d9fff2;
+  background:
+    radial-gradient(circle at 28% 28%, rgba(255, 255, 255, 0.22), transparent 32%),
+    linear-gradient(135deg, var(--green-dark), #0f2537 62%, #081511);
+  box-shadow: 0 12px 28px rgba(23, 32, 28, 0.14);
+  font-size: 1.35rem;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
 .app-copy,
 .company-copy {
   min-width: 0;
@@ -275,6 +292,10 @@ footer a {
 .company-copy {
   max-width: 720px;
   font-size: 1.05rem;
+}
+
+.compact-hero {
+  min-height: auto;
 }
 
 footer {
