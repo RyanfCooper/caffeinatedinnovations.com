@@ -41,16 +41,18 @@
   #launcher.active { display: flex; }
 
   .brand {
-    font-size: 20px; letter-spacing: 8px; color: var(--dim);
-    text-transform: uppercase; margin-bottom: 4px;
+    font-size: 14px; letter-spacing: 8px; color: var(--dim);
+    text-transform: uppercase; margin-bottom: 2px;
   }
   .title {
-    font-size: 48px; font-weight: bold; letter-spacing: 4px;
+    font-size: 34px; font-weight: bold; letter-spacing: 4px;
     color: var(--cyan); text-shadow: 0 0 18px rgba(0,229,255,.45);
-    margin-bottom: 22px;
+    margin-bottom: 12px;
   }
 
-  .menu { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex: 1; align-content: center; }
+  .menu { display: flex; flex-direction: column; gap: 10px; flex: 1; justify-content: center; }
+  .sec-head { font-size: 12px; letter-spacing: 4px; color: var(--dim); margin: 0 4px 5px; }
+  .sec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 
   .focusable {
     transition: all 120ms ease;
@@ -64,15 +66,15 @@
 
   .game-row {
     display: flex; align-items: center; gap: 10px;
-    min-height: 72px;
-    padding: 0 14px;
-    border-radius: 14px;
+    min-height: 52px;
+    padding: 0 12px;
+    border-radius: 12px;
     border: 2px solid var(--dim);
     width: 100%; box-sizing: border-box;
   }
-  .game-row .glyph { font-size: 24px; width: 32px; text-align: center; flex-shrink: 0; }
-  .game-row .label { font-size: 18px; letter-spacing: 1px; }
-  .game-row .hi { font-size: 12px; color: var(--dim); margin-left: auto; letter-spacing: 1px; flex-shrink: 0; }
+  .game-row .glyph { font-size: 20px; width: 28px; text-align: center; flex-shrink: 0; }
+  .game-row .label { font-size: 16px; letter-spacing: 1px; }
+  .game-row .hi { font-size: 11px; color: var(--dim); margin-left: auto; letter-spacing: 1px; flex-shrink: 0; }
 
   .focusable:focus {
     border-color: var(--focus);
@@ -217,6 +219,17 @@
   #bj-actions { display: flex; gap: 14px; }
   .bj-btn { min-height: 60px; padding: 0 28px; border: 2px solid var(--dim); border-radius: 12px; font-size: 21px; letter-spacing: 2px; }
 
+  /* Hold'em */
+  #hold-table { height: 440px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 0 30px; }
+  .hold-label { font-size: 13px; color: var(--dim); letter-spacing: 3px; }
+  .hold-hand { display: flex; gap: 8px; min-height: 88px; align-items: center; }
+  #hold-board { display: flex; gap: 8px; min-height: 88px; align-items: center; }
+  #hold-pot { font-size: 17px; color: var(--amber); letter-spacing: 2px; }
+  #hold-msg { font-size: 16px; letter-spacing: 1px; color: var(--ink); min-height: 22px; text-align: center; }
+  #hold-actions { display: flex; gap: 12px; }
+  .hold-btn { min-height: 54px; padding: 0 22px; border: 2px solid var(--dim); border-radius: 12px; font-size: 18px; letter-spacing: 2px; }
+  .hold-btn[disabled] { opacity: .35; }
+
   /* Trivia */
   #trivia-themes { height: 440px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-content: center; padding: 0 40px; }
   .theme-btn {
@@ -260,51 +273,81 @@
     <div class="brand">Lens</div>
     <div class="title">ARCADE</div>
     <div class="menu" id="menu">
-      <button class="focusable game-row" data-game="snake">
-        <span class="glyph" style="color:var(--lime)">⌁</span>
-        <span class="label">Snake</span>
-        <span class="hi" id="hi-snake">HI 0</span>
-      </button>
-      <button class="focusable game-row" data-game="g2048">
-        <span class="glyph" style="color:var(--cyan)">▦</span>
-        <span class="label">2048</span>
-        <span class="hi" id="hi-g2048">HI 0</span>
-      </button>
-      <button class="focusable game-row" data-game="simon">
-        <span class="glyph" style="color:var(--amber)">◉</span>
-        <span class="label">Simon</span>
-        <span class="hi" id="hi-simon">HI 0</span>
-      </button>
-      <button class="focusable game-row" data-game="react">
-        <span class="glyph" style="color:var(--pink)">✛</span>
-        <span class="label">Reflex</span>
-        <span class="hi" id="hi-react">HI 0</span>
-      </button>
-      <button class="focusable game-row" data-game="runner">
-        <span class="glyph" style="color:var(--lime)">»</span>
-        <span class="label">Runner</span>
-        <span class="hi" id="hi-runner">HI 0</span>
-      </button>
-      <button class="focusable game-row" data-game="sol">
-        <span class="glyph" style="color:var(--cyan)">♠</span>
-        <span class="label">Solitaire</span>
-        <span class="hi" id="hi-sol">HI 0</span>
-      </button>
-      <button class="focusable game-row" data-game="bj">
-        <span class="glyph" style="color:var(--pink)">♥</span>
-        <span class="label">Blackjack</span>
-        <span class="hi" id="hi-bj">HI 0</span>
-      </button>
-      <button class="focusable game-row" data-game="trivia">
-        <span class="glyph" style="color:var(--amber)">?</span>
-        <span class="label">Trivia</span>
-        <span class="hi" id="hi-trivia">HI 0</span>
-      </button>
-      <button class="focusable game-row" data-game="trail">
-        <span class="glyph" style="color:var(--amber)">△</span>
-        <span class="label">Trail</span>
-        <span class="hi" id="hi-trail">HI 0</span>
-      </button>
+      <div class="menu-sec">
+        <div class="sec-head">ARCADE</div>
+        <div class="sec-grid">
+          <button class="focusable game-row" data-game="snake">
+            <span class="glyph" style="color:var(--lime)">⌁</span>
+            <span class="label">Snake</span>
+            <span class="hi" id="hi-snake">HI 0</span>
+          </button>
+          <button class="focusable game-row" data-game="runner">
+            <span class="glyph" style="color:var(--lime)">»</span>
+            <span class="label">Runner</span>
+            <span class="hi" id="hi-runner">HI 0</span>
+          </button>
+          <button class="focusable game-row" data-game="hop">
+            <span class="glyph" style="color:var(--pink)">∩</span>
+            <span class="label">Hopper</span>
+            <span class="hi" id="hi-hop">HI 0</span>
+          </button>
+          <button class="focusable game-row" data-game="roids">
+            <span class="glyph" style="color:var(--ink)">◆</span>
+            <span class="label">Asteroids</span>
+            <span class="hi" id="hi-roids">HI 0</span>
+          </button>
+        </div>
+      </div>
+      <div class="menu-sec">
+        <div class="sec-head">BRAIN &amp; REFLEX</div>
+        <div class="sec-grid">
+          <button class="focusable game-row" data-game="g2048">
+            <span class="glyph" style="color:var(--cyan)">▦</span>
+            <span class="label">2048</span>
+            <span class="hi" id="hi-g2048">HI 0</span>
+          </button>
+          <button class="focusable game-row" data-game="simon">
+            <span class="glyph" style="color:var(--amber)">◉</span>
+            <span class="label">Simon</span>
+            <span class="hi" id="hi-simon">HI 0</span>
+          </button>
+          <button class="focusable game-row" data-game="trivia">
+            <span class="glyph" style="color:var(--amber)">?</span>
+            <span class="label">Trivia</span>
+            <span class="hi" id="hi-trivia">HI 0</span>
+          </button>
+          <button class="focusable game-row" data-game="react">
+            <span class="glyph" style="color:var(--pink)">✛</span>
+            <span class="label">Reflex</span>
+            <span class="hi" id="hi-react">HI 0</span>
+          </button>
+        </div>
+      </div>
+      <div class="menu-sec">
+        <div class="sec-head">TABLES &amp; TRAILS</div>
+        <div class="sec-grid">
+          <button class="focusable game-row" data-game="sol">
+            <span class="glyph" style="color:var(--cyan)">♠</span>
+            <span class="label">Solitaire</span>
+            <span class="hi" id="hi-sol">HI 0</span>
+          </button>
+          <button class="focusable game-row" data-game="bj">
+            <span class="glyph" style="color:var(--pink)">♥</span>
+            <span class="label">Blackjack</span>
+            <span class="hi" id="hi-bj">HI 0</span>
+          </button>
+          <button class="focusable game-row" data-game="hold">
+            <span class="glyph" style="color:var(--amber)">♦</span>
+            <span class="label">Hold'em</span>
+            <span class="hi" id="hi-hold">HI 0</span>
+          </button>
+          <button class="focusable game-row" data-game="trail">
+            <span class="glyph" style="color:var(--amber)">△</span>
+            <span class="label">Trail</span>
+            <span class="hi" id="hi-trail">HI 0</span>
+          </button>
+        </div>
+      </div>
     </div>
     <div class="hint">SWIPE to move · PINCH to select</div>
   </section>
@@ -440,6 +483,58 @@
     </div>
   </section>
 
+  <!-- ===== HOLD'EM ===== -->
+  <section id="hold" class="screen">
+    <div class="game-head"><span class="game-name">Hold'em</span><span class="score" id="hold-chips">200</span></div>
+    <div class="stage">
+      <div id="hold-table">
+        <div class="hold-label" id="hold-bot-label">DEALER BOT · 200</div>
+        <div class="hold-hand" id="hold-bot"></div>
+        <div id="hold-board"></div>
+        <div id="hold-pot">POT 0</div>
+        <div id="hold-msg"></div>
+        <div class="hold-hand" id="hold-player"></div>
+        <div id="hold-actions">
+          <button class="focusable hold-btn" id="hold-fold">FOLD</button>
+          <button class="focusable hold-btn" id="hold-call">CHECK</button>
+          <button class="focusable hold-btn" id="hold-raise">RAISE</button>
+        </div>
+      </div>
+    </div>
+    <div class="overlay" id="hold-over">
+      <div class="big">FELTED</div>
+      <div class="sub" id="hold-final">Peak 200</div>
+      <button class="focusable btn" data-act="hold-retry">↻ Rebuy</button>
+      <button class="focusable btn" data-act="menu">⌂ Menu</button>
+    </div>
+  </section>
+
+  <!-- ===== ASTEROIDS ===== -->
+  <section id="roids" class="screen">
+    <div class="game-head"><span class="game-name">Asteroids</span><span class="score" id="roids-score">0</span></div>
+    <div class="stage"><canvas id="roids-canvas" width="440" height="440"></canvas></div>
+    <div class="hint">LEFT/RIGHT turn · UP thrust · PINCH fire · DOWN warp</div>
+    <div class="overlay" id="roids-over">
+      <div class="big">SHIP LOST</div>
+      <div class="sub" id="roids-final">Score 0</div>
+      <button class="focusable btn" data-act="roids-retry">↻ Retry</button>
+      <button class="focusable btn" data-act="menu">⌂ Menu</button>
+    </div>
+  </section>
+
+  <!-- ===== HOPPER ===== -->
+  <section id="hop" class="screen">
+    <div class="game-head"><span class="game-name">Hopper</span><span class="score" id="hop-score">0</span></div>
+    <div class="stage"><canvas id="hop-canvas" width="440" height="440"></canvas></div>
+    <div class="hint">UP jump · again = double · RIGHT dash · LEFT slow · DOWN drop</div>
+    <div class="overlay" id="hop-over">
+      <div class="big">GAME OVER</div>
+      <div class="sub" id="hop-final">Score 0</div>
+      <button class="focusable btn" data-act="hop-retry">↻ Retry</button>
+      <button class="focusable btn" data-act="menu">⌂ Menu</button>
+    </div>
+  </section>
+
   <!-- ===== TRAIL ===== -->
   <section id="trail" class="screen">
     <div class="game-head"><span class="game-name">Glass Trail</span><span class="score" id="trail-miles">0 MI</span></div>
@@ -505,7 +600,7 @@ function show(id){
 function getHi(k){ try { return parseInt(localStorage.getItem('hi-'+k)||'0',10); } catch(e){ return 0; } }
 function setHi(k,v){ try { if(v>getHi(k)) localStorage.setItem('hi-'+k,String(v)); } catch(e){} refreshHi(); }
 function refreshHi(){
-  ['snake','g2048','simon','react','runner','sol','bj','trivia','trail'].forEach(k=>{
+  ['snake','g2048','simon','react','runner','sol','bj','trivia','trail','hop','roids','hold'].forEach(k=>{
     const el=document.getElementById('hi-'+k); if(el) el.textContent='HI '+getHi(k);
   });
 }
@@ -574,6 +669,9 @@ document.querySelectorAll('[data-act]').forEach(btn=>{
       document.getElementById('sol-help').classList.remove('show');
     }
     else if(a==='trail-retry'){ startTrail(); }
+    else if(a==='hop-retry'){ startHop(); }
+    else if(a==='roids-retry'){ startRoids(); }
+    else if(a==='hold-retry'){ startHold(); }
     else if(a==='bj-retry'){ startBJ(); }
     else if(a==='trivia-retry'){ startTrivia(); }
   });
@@ -589,8 +687,11 @@ function launch(game){
   if(game==='bj'){ show('bj'); startBJ(); }
   if(game==='trivia'){ show('trivia'); startTrivia(); }
   if(game==='trail'){ show('trail'); startTrail(); }
+  if(game==='hop'){ show('hop'); startHop(); }
+  if(game==='roids'){ show('roids'); startRoids(); }
+  if(game==='hold'){ show('hold'); startHold(); }
 }
-function stopAll(){ stopSnake(); stopSimon(); stopReact(); stopRunner(); stopBJ(); stopTrivia(); stopTrail(); }
+function stopAll(){ stopSnake(); stopSimon(); stopReact(); stopRunner(); stopBJ(); stopTrivia(); stopTrail(); stopHop(); stopRoids(); stopHold(); }
 
 /* ============================================================
    SNAKE
@@ -1438,6 +1539,640 @@ handlers.trivia = key=>{
   if(!quizOn){ gridNav(document.getElementById('trivia-themes'), key, 2); return; }
   if(key===DPAD.SELECT){ document.activeElement.click(); return; }
   listNav(document.getElementById('trivia-answers'), key);
+};
+
+/* ============================================================
+   HOLD'EM  (heads-up LIMIT hold'em vs the house bot, 10/20:
+   fixed bet sizes make betting a clean three-button game.
+   Blinds 5/10 alternate; four bets max per street.)
+   ============================================================ */
+const HOLD_CATS=['HIGH CARD','PAIR','TWO PAIR','TRIPS','STRAIGHT','FLUSH','FULL HOUSE','QUADS','STRAIGHT FLUSH'];
+let hDeck,hPCards,hBCards,hBoard,hPChips,hBChips,hPeakH,hPot,hStreet,hToMatchP,hToMatchB,
+    hBetsUsed,hButtonP,hTurnP,hActedP,hActedB,hPhase,hTimers=[];
+
+function holdSched(fn,ms){ hTimers.push(setTimeout(fn,ms)); }
+function stopHold(){ hTimers.forEach(clearTimeout); hTimers=[]; }
+
+/* --- 7-card evaluator: returns a comparable score --- */
+function hand7Score(cards){
+  const rs=cards.map(c=>c.r===1?14:c.r);
+  const counts={}; rs.forEach(r=>counts[r]=(counts[r]||0)+1);
+  const bySuit={}; cards.forEach(c=>{ const r=c.r===1?14:c.r; (bySuit[c.s]=bySuit[c.s]||[]).push(r); });
+  let flushRanks=null;
+  for(const s in bySuit) if(bySuit[s].length>=5) flushRanks=bySuit[s].slice().sort((a,b)=>b-a);
+  const straightHigh=(arr)=>{
+    const u=[...new Set(arr)].sort((a,b)=>b-a);
+    if(u[0]===14) u.push(1);
+    let run=1,best=0;
+    for(let i=1;i<u.length;i++){
+      if(u[i]===u[i-1]-1){ run++; if(run>=5&&!best) best=u[i]+4; }
+      else if(u[i]!==u[i-1]) run=1;
+    }
+    return best;
+  };
+  const enc=(v)=>{ while(v.length<6)v.push(0); return v.reduce((s,x)=>s*15+x,0); };
+  const sfHigh=flushRanks? straightHigh(flushRanks):0;
+  if(sfHigh) return enc([8,sfHigh]);
+  const groups=Object.entries(counts).map(([r,n])=>({r:+r,n})).sort((a,b)=>b.n-a.n||b.r-a.r);
+  const kick=(ex,k)=>rs.filter(r=>!ex.includes(r)).sort((a,b)=>b-a).slice(0,k);
+  if(groups[0].n===4) return enc([7,groups[0].r,...kick([groups[0].r],1)]);
+  if(groups[0].n===3&&groups[1]&&groups[1].n>=2) return enc([6,groups[0].r,groups[1].r]);
+  if(flushRanks) return enc([5,...flushRanks.slice(0,5)]);
+  const st=straightHigh(rs); if(st) return enc([4,st]);
+  if(groups[0].n===3) return enc([3,groups[0].r,...kick([groups[0].r],2)]);
+  if(groups[0].n===2&&groups[1]&&groups[1].n===2){
+    const hp=Math.max(groups[0].r,groups[1].r), lp=Math.min(groups[0].r,groups[1].r);
+    return enc([2,hp,lp,...kick([hp,lp],1)]);
+  }
+  if(groups[0].n===2) return enc([1,groups[0].r,...kick([groups[0].r],3)]);
+  return enc([0,...kick([],5)]);
+}
+function holdCat(score){ return Math.floor(score/Math.pow(15,5)); }
+
+function startHold(){
+  document.getElementById('hold-over').classList.remove('show');
+  stopHold();
+  hPChips=200; hBChips=200; hPeakH=200; hButtonP=Math.random()<0.5;
+  beginHoldHand();
+}
+
+function holdMsg(t){ document.getElementById('hold-msg').textContent=t; }
+function holdBetSize(){ return hStreet<2?10:20; }
+
+function beginHoldHand(){
+  if(hPChips<=0){ return holdBust(); }
+  if(hBChips<20){ hBChips=200; holdMsg('A new bot sits down.'); }
+  hDeck=mkDeck();
+  hPCards=[hDeck.pop(),hDeck.pop()];
+  hBCards=[hDeck.pop(),hDeck.pop()];
+  hBoard=[]; hPot=0; hStreet=0; hBetsUsed=1;
+  hActedP=false; hActedB=false; hPhase='bet';
+  hButtonP=!hButtonP;
+  // blinds (button = small blind, acts first preflop)
+  const sbP=hButtonP;
+  const sb=Math.min(5, sbP?hPChips:hBChips), bb=Math.min(10, sbP?hBChips:hPChips);
+  if(sbP){ hPChips-=sb; hBChips-=bb; hToMatchP=10-sb; hToMatchB=0; }
+  else { hBChips-=sb; hPChips-=bb; hToMatchB=10-sb; hToMatchP=0; }
+  hPot=sb+bb;
+  hTurnP=hButtonP;
+  renderHold(false);
+  holdMsg(hButtonP?'You are the button. Blinds 5/10.':'Bot is the button. Blinds 5/10.');
+  holdSched(()=>{ holdContinue(); }, 900);
+}
+
+function holdContinue(){
+  if(hPhase!=='bet') return;
+  renderHold(false);
+  if(hTurnP){ holdEnableActions(); }
+  else holdSched(botHoldAct, 700);
+}
+
+function holdEnableActions(){
+  // Raising requires covering the call with something left to add;
+  // a short stack's RAISE would drive toMatch negative and stall the hand.
+  const canRaise = hBetsUsed<4 && hPChips>hToMatchP && hBChips>0;
+  document.getElementById('hold-call').textContent = hToMatchP>0? ('CALL '+Math.min(hToMatchP,hPChips)) : 'CHECK';
+  document.getElementById('hold-raise').textContent = hToMatchP>0? 'RAISE' : 'BET';
+  document.getElementById('hold-raise').disabled = !canRaise;
+  document.getElementById('hold-fold').disabled = false;
+  document.getElementById('hold-call').disabled = false;
+  document.getElementById('hold-fold').focus();
+  holdMsg('Your action.');
+}
+function holdDisableActions(){
+  ['hold-fold','hold-call','hold-raise'].forEach(id=>document.getElementById(id).disabled=true);
+}
+
+function holdApply(isPlayer, act){
+  const size=holdBetSize();
+  if(act==='fold'){
+    hPhase='done';
+    const winP=!isPlayer;
+    const msg=(isPlayer?'You fold. ':'Bot folds. ')+(winP?'You take '+hPot+'.':'Bot takes '+hPot+'.');
+    holdAward(winP, msg, false);
+    return;
+  }
+  if(act==='call'){
+    if(isPlayer){ const pay=Math.min(hToMatchP,hPChips); hPChips-=pay; hPot+=pay; hToMatchP=0; hActedP=true; }
+    else { const pay=Math.min(hToMatchB,hBChips); hBChips-=pay; hPot+=pay; hToMatchB=0; hActedB=true; }
+  }
+  if(act==='raise'){
+    if(isPlayer){
+      const pay=Math.min(hToMatchP+size, hPChips);
+      hPChips-=pay; hPot+=pay;
+      hToMatchB += pay-hToMatchP; hToMatchP=0;
+      hActedP=true; hActedB=false;
+    } else {
+      const pay=Math.min(hToMatchB+size, hBChips);
+      hBChips-=pay; hPot+=pay;
+      hToMatchP += pay-hToMatchB; hToMatchB=0;
+      hActedB=true; hActedP=false;
+    }
+    hBetsUsed++;
+  }
+  renderHold(false);
+  // street complete?
+  if(hActedP && hActedB && hToMatchP===0 && hToMatchB===0){
+    holdNextStreet();
+  } else {
+    hTurnP = isPlayer? false : true;
+    holdContinue();
+  }
+}
+
+function holdNextStreet(){
+  if(hStreet===3 || hPChips===0 || hBChips===0){
+    if(hStreet<3 && (hPChips===0||hBChips===0)){
+      // someone is all-in: run out the board
+      while(hBoard.length<5){ hBoard.push(hDeck.pop()); }
+      renderHold(false);
+      holdSched(holdShowdown, 900);
+      return;
+    }
+    if(hStreet===3){ holdSched(holdShowdown, 500); return; }
+  }
+  hStreet++;
+  hBetsUsed=0; hActedP=false; hActedB=false; hToMatchP=0; hToMatchB=0;
+  if(hStreet===1){ hBoard.push(hDeck.pop(),hDeck.pop(),hDeck.pop()); holdMsg('The flop.'); }
+  else if(hStreet===2){ hBoard.push(hDeck.pop()); holdMsg('The turn.'); }
+  else if(hStreet===3){ hBoard.push(hDeck.pop()); holdMsg('The river.'); }
+  hTurnP=!hButtonP; // non-button acts first postflop
+  renderHold(false);
+  holdSched(holdContinue, 800);
+}
+
+function holdShowdown(){
+  hPhase='done';
+  const pS=hand7Score(hPCards.concat(hBoard));
+  const bS=hand7Score(hBCards.concat(hBoard));
+  const pC=HOLD_CATS[holdCat(pS)], bC=HOLD_CATS[holdCat(bS)];
+  renderHold(true);
+  if(pS>bS) holdAward(true, 'You win '+hPot+' — '+pC+' beats '+bC+'.', true);
+  else if(bS>pS) holdAward(false, 'Bot wins '+hPot+' — '+bC+' beats '+pC+'.', true);
+  else {
+    const half=Math.floor(hPot/2);
+    hPChips+=hPot-half; hBChips+=half;
+    holdMsg('Split pot — both hold '+pC+'.');
+    holdFinishHand();
+  }
+}
+
+function holdAward(toPlayer, msg, reveal){
+  if(toPlayer) hPChips+=hPot; else hBChips+=hPot;
+  renderHold(reveal);
+  holdMsg(msg);
+  holdFinishHand();
+}
+function holdFinishHand(){
+  hPeakH=Math.max(hPeakH,hPChips);
+  setHi('hold', hPeakH);
+  holdDisableActions();
+  holdSched(beginHoldHand, 2200);
+}
+function holdBust(){
+  setHi('hold', hPeakH);
+  document.getElementById('hold-final').textContent='Peak '+hPeakH+' chips';
+  const ov=document.getElementById('hold-over'); ov.classList.add('show');
+  ov.querySelector('.focusable').focus();
+}
+
+/* --- bot --- */
+function botHoldAct(){
+  if(hPhase!=='bet') return;
+  const toCall=hToMatchB, size=holdBetSize();
+  let strength;
+  if(hStreet===0){
+    const a=hBCards[0], b=hBCards[1];
+    const hiA=a.r===1?14:a.r, hiB=b.r===1?14:b.r;
+    if(a.r===b.r) strength=20+hiA;
+    else strength=(hiA+hiB)/2 + (a.s===b.s?3:0) + (Math.abs(hiA-hiB)<=2?2:0) + (Math.max(hiA,hiB)===14?6:0);
+  } else {
+    const cat=holdCat(hand7Score(hBCards.concat(hBoard)));
+    strength=10+cat*8;
+    // draws
+    const suits={}; hBCards.concat(hBoard).forEach(c=>suits[c.s]=(suits[c.s]||0)+1);
+    if(Object.values(suits).some(n=>n===4)) strength+=7;
+  }
+  strength += Math.random()*6-3;
+  const bluff=Math.random()<0.08;
+  const canRaise=hBetsUsed<4 && hBChips>hToMatchB && hPChips>0;
+  if(toCall===0){
+    if((strength>=26||bluff) && canRaise){ holdMsg('Bot bets '+size+'.'); holdApply(false,'raise'); }
+    else { holdMsg('Bot checks.'); holdApply(false,'call'); }
+  } else {
+    if((strength>=32||bluff) && canRaise){ holdMsg('Bot raises.'); holdApply(false,'raise'); }
+    else if(strength>=16 || toCall<=5){ holdMsg('Bot calls.'); holdApply(false,'call'); }
+    else { holdApply(false,'fold'); }
+  }
+}
+
+/* --- render --- */
+function holdCardDiv(c,hidden){
+  const d=document.createElement('div');
+  if(hidden){ d.className='bj-card hole'; d.textContent='▮'; }
+  else { d.className='bj-card '+(isRed(c)?'red':'blk'); d.textContent=cardTxt(c); }
+  return d;
+}
+function renderHold(reveal){
+  const bEl=document.getElementById('hold-bot');
+  const pEl=document.getElementById('hold-player');
+  const brd=document.getElementById('hold-board');
+  bEl.innerHTML=''; pEl.innerHTML=''; brd.innerHTML='';
+  hBCards.forEach(c=> bEl.appendChild(holdCardDiv(c, !reveal)));
+  hPCards.forEach(c=> pEl.appendChild(holdCardDiv(c, false)));
+  for(let i=0;i<5;i++){
+    if(i<hBoard.length) brd.appendChild(holdCardDiv(hBoard[i],false));
+    else { const d=document.createElement('div'); d.className='bj-card hole'; d.textContent='·'; brd.appendChild(d); }
+  }
+  document.getElementById('hold-pot').textContent='POT '+hPot+(hToMatchP>0?' · TO CALL '+hToMatchP:'');
+  document.getElementById('hold-chips').textContent=hPChips;
+  document.getElementById('hold-bot-label').textContent=
+    'DEALER BOT · '+hBChips+(hButtonP?'':' · BUTTON');
+}
+
+document.getElementById('hold-fold').addEventListener('click', ()=>{ if(hPhase==='bet'&&hTurnP){ holdDisableActions(); holdApply(true,'fold'); } });
+document.getElementById('hold-call').addEventListener('click', ()=>{ if(hPhase==='bet'&&hTurnP){ holdDisableActions(); holdApply(true,'call'); } });
+document.getElementById('hold-raise').addEventListener('click', ()=>{ if(hPhase==='bet'&&hTurnP&&hBetsUsed<4){ holdDisableActions(); holdApply(true,'raise'); } });
+
+handlers.hold = key=>{
+  const ov=document.getElementById('hold-over');
+  if(ov.classList.contains('show')){ listNav(ov,key); return; }
+  if(key===DPAD.SELECT){ document.activeElement.click(); return; }
+  listNav(document.getElementById('hold-actions'), key);
+};
+
+/* ============================================================
+   HOPPER  (Mario-Run-style auto-run platformer: tap-only.
+   UP jumps (again in air = double), DOWN drops, RIGHT dashes,
+   LEFT slows. Stomp walkers, grab coins, reach the flag.)
+   ============================================================ */
+const hopCv=document.getElementById('hop-canvas');
+const hctx=hopCv.getContext('2d');
+const HGRAV=0.9, HJUMP=-13.5;
+let hSolids,hCoins,hFoes,hFlagX,hLevelW,hHero,hCam,hScore,hLives,hLevel,hLoop,hInvul,hAirUsed;
+
+function startHop(){
+  document.getElementById('hop-over').classList.remove('show');
+  hScore=0; hLives=3; hLevel=1;
+  genHopLevel(); resetHopHero();
+  document.getElementById('hop-score').textContent='0';
+  clearInterval(hLoop); hLoop=setInterval(hopTick,30);
+}
+function stopHop(){ clearInterval(hLoop); }
+
+function genHopLevel(){
+  hSolids=[]; hCoins=[]; hFoes=[];
+  const gy=360, diff=hLevel-1;
+  let x=0;
+  const ground=(w)=>{ hSolids.push({x, y:gy, w, h:80}); };
+  const foeOn=(fx,fw,topY)=>{ hFoes.push({x:fx+10, y:topY-26, w:26, h:26, dir:1, min:fx+6, max:fx+fw-32, alive:true}); };
+  const coinRow=(cx,cy,n)=>{ for(let k=0;k<n;k++) hCoins.push({x:cx+k*34, y:cy, w:16, h:16, taken:false}); };
+  ground(260); x+=260;
+  const targetW=1900+diff*250;
+  while(x<targetW){
+    const r=Math.random();
+    if(r<0.28){                                   // gap
+      x += 80+Math.random()*40+Math.min(diff*12,50);
+      const w=160+Math.random()*120;
+      hSolids.push({x, y:gy, w, h:80});
+      if(Math.random()<0.4+diff*0.1) foeOn(x,w,gy);
+      x+=w;
+    } else if(r<0.52){                            // floating platform over a wide gap
+      const gap=170+Math.random()*60;
+      const py=252+Math.random()*48;
+      hSolids.push({x:x+gap/2-58, y:py, w:116, h:12, oneway:true});
+      coinRow(x+gap/2-40, py-34, 3);
+      x+=gap;
+      const w=170+Math.random()*90;
+      hSolids.push({x, y:gy, w, h:80});
+      x+=w;
+    } else if(r<0.74){                            // step block on the ground
+      const w=140+Math.random()*90, bh=40+Math.random()*46;
+      ground(w);
+      hSolids.push({x:x+30, y:gy-bh, w:w-60, h:bh});
+      if(Math.random()<0.5) coinRow(x+40, gy-bh-30, 2);
+      x+=w;
+    } else {                                      // flat stretch with traffic
+      const w=200+Math.random()*120;
+      ground(w);
+      if(Math.random()<0.55+diff*0.1) foeOn(x,w,gy);
+      if(Math.random()<0.4) coinRow(x+40, gy-70, 3);
+      x+=w;
+    }
+  }
+  ground(240);
+  hFlagX=x+150;
+  hLevelW=x+240;
+}
+
+function resetHopHero(){
+  hHero={x:60, y:200, w:26, h:32, vy:0, coyote:0, dash:0, brake:0};
+  hAirUsed=false; hInvul=26; hCam=0;
+}
+
+function hopDie(){
+  hLives--;
+  if(hLives<=0){
+    stopHop(); setHi('hop', hScore);
+    document.getElementById('hop-final').textContent='Score '+hScore+' · Level '+hLevel;
+    const ov=document.getElementById('hop-over'); ov.classList.add('show');
+    ov.querySelector('.focusable').focus();
+  } else {
+    resetHopHero();
+  }
+}
+
+function hopTick(){
+  const h=hHero;
+  let speed=4.2+ (hLevel-1)*0.25;
+  if(h.dash>0){ speed=7.2; h.dash--; }
+  else if(h.brake>0){ speed=1.6; h.brake--; }
+  const prevBottom=h.y+h.h, prevX=h.x;
+  h.x+=speed;
+  // horizontal walls (solid blocks only)
+  for(const s of hSolids){
+    if(s.oneway) continue;
+    if(h.x+h.w>s.x && h.x<s.x+s.w && h.y+h.h>s.y+4 && h.y<s.y+s.h){
+      if(prevX+h.w<=s.x+6) h.x=s.x-h.w;
+    }
+  }
+  h.vy=Math.min(h.vy+HGRAV,14);
+  h.y+=h.vy;
+  let grounded=false;
+  for(const s of hSolids){
+    if(h.x+h.w>s.x+2 && h.x<s.x+s.w-2){
+      if(h.vy>=0 && prevBottom<=s.y+6 && h.y+h.h>=s.y && h.y+h.h<=s.y+s.h+14){
+        h.y=s.y-h.h; h.vy=0; grounded=true;
+      } else if(h.vy<0 && !s.oneway && h.y<=s.y+s.h && prevBottom-h.h>=s.y+s.h-6){
+        h.y=s.y+s.h; h.vy=0;
+      }
+    }
+  }
+  if(grounded){ h.coyote=6; hAirUsed=false; } else if(h.coyote>0) h.coyote--;
+  if(h.y>470) return hopDie();
+  if(hInvul>0) hInvul--;
+  // foes
+  for(const f of hFoes){
+    if(!f.alive) continue;
+    f.x+=f.dir*1.2;
+    if(f.x<f.min||f.x>f.max) f.dir*=-1;
+    if(h.x+h.w>f.x && h.x<f.x+f.w && h.y+h.h>f.y && h.y<f.y+f.h){
+      if(h.vy>0 && (h.y+h.h)-f.y<18){
+        f.alive=false; h.vy=-9; hScore+=25;
+      } else if(hInvul<=0) return hopDie();
+    }
+  }
+  // coins
+  for(const c of hCoins){
+    if(!c.taken && h.x+h.w>c.x && h.x<c.x+c.w && h.y+h.h>c.y && h.y<c.y+c.h){
+      c.taken=true; hScore+=10;
+    }
+  }
+  // flag
+  if(h.x+h.w>hFlagX){
+    hScore+=200; hLevel++;
+    genHopLevel(); resetHopHero();
+  }
+  hCam=Math.max(0, Math.min(h.x-140, hLevelW-440));
+  document.getElementById('hop-score').textContent=hScore;
+  drawHop();
+}
+
+function drawHop(){
+  hctx.clearRect(0,0,440,440);
+  const cam=hCam;
+  // solids
+  hctx.lineWidth=2;
+  for(const s of hSolids){
+    if(s.x+s.w<cam||s.x>cam+440) continue;
+    hctx.strokeStyle=s.oneway?'#6dff5a':'#2c8a5e';
+    hctx.shadowColor='#6dff5a'; hctx.shadowBlur=s.oneway?10:0;
+    hctx.strokeRect(s.x-cam, s.y, s.w, Math.min(s.h,440-s.y));
+    hctx.shadowBlur=0;
+    hctx.strokeStyle='#6dff5a';
+    hctx.beginPath(); hctx.moveTo(s.x-cam,s.y); hctx.lineTo(s.x-cam+s.w,s.y); hctx.stroke();
+  }
+  // coins
+  const wob=1+Math.sin(Date.now()/150)*0.25;
+  for(const c of hCoins){
+    if(c.taken||c.x+16<cam||c.x>cam+440) continue;
+    hctx.strokeStyle='#ffc24b'; hctx.shadowColor='#ffc24b'; hctx.shadowBlur=10;
+    hctx.strokeRect(c.x-cam+8-8*wob/1.25, c.y, 16*wob/1.25, 16);
+    hctx.shadowBlur=0;
+  }
+  // foes
+  for(const f of hFoes){
+    if(!f.alive||f.x+f.w<cam||f.x>cam+440) continue;
+    hctx.strokeStyle='#ff5ea8'; hctx.shadowColor='#ff5ea8'; hctx.shadowBlur=10;
+    hctx.strokeRect(f.x-cam, f.y, f.w, f.h);
+    hctx.fillStyle='#ff5ea8';
+    hctx.fillRect(f.x-cam+6, f.y+8, 4, 4); hctx.fillRect(f.x-cam+16, f.y+8, 4, 4);
+    hctx.shadowBlur=0;
+  }
+  // flag
+  if(hFlagX-cam<460){
+    hctx.strokeStyle='#6dff5a'; hctx.shadowColor='#6dff5a'; hctx.shadowBlur=12;
+    hctx.beginPath(); hctx.moveTo(hFlagX-cam,360); hctx.lineTo(hFlagX-cam,240); hctx.stroke();
+    hctx.fillStyle='#ff5ea8';
+    hctx.beginPath(); hctx.moveTo(hFlagX-cam,240); hctx.lineTo(hFlagX-cam+26,250); hctx.lineTo(hFlagX-cam,260); hctx.fill();
+    hctx.shadowBlur=0;
+  }
+  // hero (blinks while invulnerable)
+  if(hInvul<=0 || (hInvul%4)<2){
+    const h=hHero;
+    hctx.strokeStyle='#00e5ff'; hctx.shadowColor='#00e5ff'; hctx.shadowBlur=14;
+    hctx.strokeRect(h.x-cam, h.y, h.w, h.h);
+    hctx.beginPath(); hctx.moveTo(h.x-cam-3,h.y+8); hctx.lineTo(h.x-cam+h.w+3,h.y+8); hctx.stroke();
+    hctx.fillStyle='#eafcff'; hctx.fillRect(h.x-cam+h.w-9, h.y+13, 4, 4);
+    hctx.shadowBlur=0;
+  }
+  // HUD
+  hctx.fillStyle='#ff5ea8'; hctx.font='14px Courier New';
+  hctx.fillText('♥'.repeat(Math.max(0,hLives)), 8, 18);
+  hctx.fillStyle='#4a7d86';
+  hctx.fillText('LV '+hLevel, 392, 18);
+}
+
+handlers.hop = key=>{
+  const ov=document.getElementById('hop-over');
+  if(ov.classList.contains('show')){ listNav(ov,key); return; }
+  const h=hHero;
+  if(key===DPAD.UP || key===DPAD.SELECT){
+    if(h.coyote>0){ h.vy=HJUMP; h.coyote=0; }
+    else if(!hAirUsed){ h.vy=HJUMP*0.92; hAirUsed=true; }
+  }
+  if(key===DPAD.DOWN) h.vy=Math.max(h.vy,13);
+  if(key===DPAD.RIGHT){ h.dash=12; h.brake=0; }
+  if(key===DPAD.LEFT){ h.brake=14; h.dash=0; }
+};
+
+/* ============================================================
+   ASTEROIDS  (vector classic, born for this display.
+   LEFT/RIGHT rotate, UP thrusts, PINCH fires, DOWN hyperspace.)
+   ============================================================ */
+const roCv=document.getElementById('roids-canvas');
+const roCtx=roCv.getContext('2d');
+let roShip,roAst,roBul,roScore,roLives,roWave,roLoop,roInvul,roHyperCd,roThrustTick;
+
+function startRoids(){
+  document.getElementById('roids-over').classList.remove('show');
+  roScore=0; roLives=3; roWave=1; roBul=[];
+  roShip={x:220,y:220,a:-Math.PI/2,vx:0,vy:0};
+  roInvul=40; roHyperCd=0; roThrustTick=0;
+  spawnRoidsWave();
+  document.getElementById('roids-score').textContent='0';
+  clearInterval(roLoop); roLoop=setInterval(roidsTick,30);
+}
+function stopRoids(){ clearInterval(roLoop); }
+
+function mkAst(x,y,r,vx,vy){
+  const verts=[];
+  for(let i=0;i<8;i++) verts.push(0.72+Math.random()*0.5);
+  return {x,y,r,vx,vy,rot:Math.random()*Math.PI*2,spin:(Math.random()-0.5)*0.05,verts};
+}
+function spawnRoidsWave(){
+  roAst=[];
+  const n=3+roWave;
+  for(let i=0;i<n;i++){
+    // spawn on an edge, away from the ship
+    let x,y;
+    if(Math.random()<0.5){ x=Math.random()*440; y=Math.random()<0.5?-20:460; }
+    else { x=Math.random()<0.5?-20:460; y=Math.random()*440; }
+    const sp=0.8+Math.random()*0.8+roWave*0.1;
+    const ang=Math.random()*Math.PI*2;
+    roAst.push(mkAst(x,y,34,Math.cos(ang)*sp,Math.sin(ang)*sp));
+  }
+  roInvul=Math.max(roInvul,40);
+}
+function wrapPos(o){
+  if(o.x<-40)o.x+=520; if(o.x>480)o.x-=520;
+  if(o.y<-40)o.y+=520; if(o.y>480)o.y-=520;
+}
+function splitAst(a,idx){
+  roAst.splice(idx,1);
+  roScore += a.r>28?20 : a.r>16?50 : 100;
+  document.getElementById('roids-score').textContent=roScore;
+  if(a.r>16){
+    const nr=a.r>28?20:11;
+    for(let k=0;k<2;k++){
+      const ang=Math.random()*Math.PI*2, sp=1+Math.random()*1.2;
+      roAst.push(mkAst(a.x,a.y,nr,a.vx*0.5+Math.cos(ang)*sp,a.vy*0.5+Math.sin(ang)*sp));
+    }
+  }
+  if(!roAst.length){ roWave++; spawnRoidsWave(); }
+}
+function roidsShipDie(){
+  roLives--;
+  if(roLives<=0){
+    stopRoids(); setHi('roids', roScore);
+    document.getElementById('roids-final').textContent='Score '+roScore+' · Wave '+roWave;
+    const ov=document.getElementById('roids-over'); ov.classList.add('show');
+    ov.querySelector('.focusable').focus();
+    return;
+  }
+  roShip={x:220,y:220,a:-Math.PI/2,vx:0,vy:0};
+  roInvul=60;
+}
+
+function roidsTick(){
+  const s=roShip;
+  s.vx*=0.985; s.vy*=0.985;
+  s.x+=s.vx; s.y+=s.vy; wrapPos(s);
+  if(roInvul>0)roInvul--;
+  if(roHyperCd>0)roHyperCd--;
+  if(roThrustTick>0)roThrustTick--;
+  for(let i=roBul.length-1;i>=0;i--){
+    const b=roBul[i];
+    b.x+=b.vx; b.y+=b.vy; wrapPos(b);
+    if(--b.life<=0){ roBul.splice(i,1); continue; }
+  }
+  for(const a of roAst){ a.x+=a.vx; a.y+=a.vy; a.rot+=a.spin; wrapPos(a); }
+  // bullets vs asteroids
+  for(let i=roAst.length-1;i>=0;i--){
+    const a=roAst[i];
+    for(let j=roBul.length-1;j>=0;j--){
+      const b=roBul[j];
+      const dx=a.x-b.x, dy=a.y-b.y;
+      if(dx*dx+dy*dy < a.r*a.r){ roBul.splice(j,1); splitAst(a,i); break; }
+    }
+  }
+  // ship vs asteroids
+  if(roInvul<=0){
+    for(let i=roAst.length-1;i>=0;i--){
+      const a=roAst[i];
+      const dx=a.x-s.x, dy=a.y-s.y, rr=a.r+9;
+      if(dx*dx+dy*dy < rr*rr){ roidsShipDie(); break; }
+    }
+  }
+  drawRoids();
+}
+
+function drawRoids(){
+  roCtx.clearRect(0,0,440,440);
+  const s=roShip;
+  // ship
+  if(roInvul<=0 || (roInvul%6)<3){
+    roCtx.strokeStyle='#00e5ff'; roCtx.shadowColor='#00e5ff'; roCtx.shadowBlur=12; roCtx.lineWidth=2;
+    const nose=[s.x+Math.cos(s.a)*14, s.y+Math.sin(s.a)*14];
+    const l=[s.x+Math.cos(s.a+2.6)*11, s.y+Math.sin(s.a+2.6)*11];
+    const r=[s.x+Math.cos(s.a-2.6)*11, s.y+Math.sin(s.a-2.6)*11];
+    roCtx.beginPath(); roCtx.moveTo(nose[0],nose[1]); roCtx.lineTo(l[0],l[1]); roCtx.lineTo(r[0],r[1]); roCtx.closePath(); roCtx.stroke();
+    if(roThrustTick>0){
+      roCtx.strokeStyle='#ffc24b'; roCtx.shadowColor='#ffc24b';
+      const t=[s.x-Math.cos(s.a)*15, s.y-Math.sin(s.a)*15];
+      roCtx.beginPath(); roCtx.moveTo(l[0],l[1]); roCtx.lineTo(t[0],t[1]); roCtx.lineTo(r[0],r[1]); roCtx.stroke();
+    }
+    roCtx.shadowBlur=0;
+  }
+  // asteroids
+  roCtx.strokeStyle='#eafcff'; roCtx.shadowColor='#eafcff'; roCtx.shadowBlur=8; roCtx.lineWidth=2;
+  for(const a of roAst){
+    roCtx.beginPath();
+    for(let i=0;i<8;i++){
+      const ang=a.rot+i*Math.PI/4, rad=a.r*a.verts[i];
+      const px=a.x+Math.cos(ang)*rad, py=a.y+Math.sin(ang)*rad;
+      if(i===0) roCtx.moveTo(px,py); else roCtx.lineTo(px,py);
+    }
+    roCtx.closePath(); roCtx.stroke();
+  }
+  roCtx.shadowBlur=0;
+  // bullets
+  roCtx.fillStyle='#ffc24b'; roCtx.shadowColor='#ffc24b'; roCtx.shadowBlur=8;
+  for(const b of roBul) roCtx.fillRect(b.x-2,b.y-2,4,4);
+  roCtx.shadowBlur=0;
+  // HUD: lives as little ships, wave at right
+  roCtx.strokeStyle='#00e5ff'; roCtx.lineWidth=1.5;
+  for(let i=0;i<roLives;i++){
+    const lx=14+i*16, ly=14;
+    roCtx.beginPath(); roCtx.moveTo(lx,ly-7); roCtx.lineTo(lx-5,ly+5); roCtx.lineTo(lx+5,ly+5); roCtx.closePath(); roCtx.stroke();
+  }
+  roCtx.fillStyle='#4a7d86'; roCtx.font='14px Courier New';
+  roCtx.fillText('WAVE '+roWave, 372, 18);
+}
+
+handlers.roids = key=>{
+  const ov=document.getElementById('roids-over');
+  if(ov.classList.contains('show')){ listNav(ov,key); return; }
+  const s=roShip;
+  if(key===DPAD.LEFT) s.a-=Math.PI/12;
+  if(key===DPAD.RIGHT) s.a+=Math.PI/12;
+  if(key===DPAD.UP){
+    s.vx+=Math.cos(s.a)*1.6; s.vy+=Math.sin(s.a)*1.6;
+    const sp=Math.hypot(s.vx,s.vy);
+    if(sp>6.5){ s.vx*=6.5/sp; s.vy*=6.5/sp; }
+    roThrustTick=4;
+  }
+  if(key===DPAD.DOWN && roHyperCd<=0){
+    s.x=30+Math.random()*380; s.y=30+Math.random()*380; s.vx=0; s.vy=0;
+    roInvul=Math.max(roInvul,30); roHyperCd=66;
+  }
+  if(key===DPAD.SELECT && roBul.length<4){
+    roBul.push({
+      x:s.x+Math.cos(s.a)*14, y:s.y+Math.sin(s.a)*14,
+      vx:Math.cos(s.a)*8+s.vx*0.5, vy:Math.sin(s.a)*8+s.vy*0.5,
+      life:46,
+    });
+  }
 };
 
 /* ============================================================
