@@ -214,6 +214,62 @@ h3 {
   font-weight: 800;
 }
 
+.featured-slides {
+  display: grid;
+}
+
+.featured-slide {
+  grid-area: 1 / 1;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 320ms ease;
+}
+
+.featured-slide.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.featured-icon {
+  display: block;
+  width: 72px;
+  height: 72px;
+  margin-bottom: 16px;
+  border-radius: 14px;
+  box-shadow: 0 12px 28px rgba(23, 32, 28, 0.14);
+}
+
+.app-mark.featured-mark {
+  width: 72px;
+  height: 72px;
+  margin-bottom: 16px;
+  font-size: 1.1rem;
+}
+
+.featured-dots {
+  display: flex;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.featured-dots .dot {
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border: 1px solid var(--green);
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+
+.featured-dots .dot:hover {
+  background: rgba(19, 103, 76, 0.35);
+}
+
+.featured-dots .dot.active {
+  background: var(--green);
+}
+
 .section {
   padding: clamp(56px, 8vw, 96px) clamp(20px, 6vw, 72px);
   border-top: 1px solid var(--line);

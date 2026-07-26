@@ -50,7 +50,7 @@
     margin-bottom: 22px;
   }
 
-  .menu { display: flex; flex-direction: column; gap: 12px; flex: 1; justify-content: center; }
+  .menu { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex: 1; align-content: center; }
 
   .focusable {
     transition: all 120ms ease;
@@ -63,16 +63,16 @@
   }
 
   .game-row {
-    display: flex; align-items: center; gap: 18px;
-    min-height: 80px;
-    padding: 0 20px;
+    display: flex; align-items: center; gap: 12px;
+    min-height: 84px;
+    padding: 0 16px;
     border-radius: 14px;
     border: 2px solid var(--dim);
     width: 100%; box-sizing: border-box;
   }
-  .game-row .glyph { font-size: 36px; width: 44px; text-align: center; flex-shrink: 0; }
-  .game-row .label { font-size: 28px; letter-spacing: 2px; }
-  .game-row .hi { font-size: 15px; color: var(--dim); margin-left: auto; letter-spacing: 1px; flex-shrink: 0; }
+  .game-row .glyph { font-size: 28px; width: 36px; text-align: center; flex-shrink: 0; }
+  .game-row .label { font-size: 20px; letter-spacing: 1px; }
+  .game-row .hi { font-size: 12px; color: var(--dim); margin-left: auto; letter-spacing: 1px; flex-shrink: 0; }
 
   .focusable:focus {
     border-color: var(--focus);
@@ -105,10 +105,14 @@
     z-index: 10;
   }
   .overlay.show { display: flex; }
-  /* When an overlay is up, suppress anything underneath that could bleed through
-     the gaps between buttons (start prompts, footer hints). */
+  /* When an overlay is up, suppress anything underneath that could bleed
+     through: on the additive display, the overlay's black background is
+     TRANSPARENT, so any lit pixels below stay visible. Hide them all. */
   .screen:has(.overlay.show) #react-msg,
   .screen:has(.overlay.show) .simon-center,
+  .screen:has(.overlay.show) .stage,
+  .screen:has(.overlay.show) #trivia-themes,
+  .screen:has(.overlay.show) #trivia-quiz,
   .screen:has(.overlay.show) .hint { visibility: hidden; }
   .overlay .big { font-size: 44px; color: var(--pink); letter-spacing: 4px; text-shadow: 0 0 18px rgba(255,94,168,.5); }
   .overlay .sub { font-size: 20px; color: var(--ink); letter-spacing: 2px; }
@@ -133,22 +137,80 @@
   .tile[data-v]:not([data-v="0"]) { border-color: var(--cyan); color: var(--cyan); text-shadow: 0 0 12px rgba(0,229,255,.4); }
   .tile[data-v="0"] { color: transparent; }
 
-  /* Simon pads */
+  /* Simon pads — plus layout: each pad sits where its d-pad direction points */
   #simon-pad-grid { position: relative; width: 360px; height: 360px; }
   .pad {
-    position: absolute; width: 168px; height: 168px; border: 3px solid; border-radius: 18px;
+    position: absolute; width: 112px; height: 112px; border: 3px solid; border-radius: 18px;
     opacity: .28; transition: opacity 90ms ease;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
   }
   .pad.lit { opacity: 1; box-shadow: 0 0 40px currentColor; }
-  .pad.p0 { top: 0; left: 0; color: var(--cyan); border-color: var(--cyan); }
-  .pad.p1 { top: 0; right: 0; color: var(--lime); border-color: var(--lime); }
-  .pad.p2 { bottom: 0; left: 0; color: var(--amber); border-color: var(--amber); }
-  .pad.p3 { bottom: 0; right: 0; color: var(--pink); border-color: var(--pink); }
+  .pad.p0 { top: 0; left: 124px; color: var(--cyan); border-color: var(--cyan); }      /* UP */
+  .pad.p1 { top: 124px; right: 0; color: var(--lime); border-color: var(--lime); }     /* RIGHT */
+  .pad.p2 { bottom: 0; left: 124px; color: var(--amber); border-color: var(--amber); } /* DOWN */
+  .pad.p3 { top: 124px; left: 0; color: var(--pink); border-color: var(--pink); }      /* LEFT */
   .simon-center {
-    position: absolute; inset: 0; margin: auto; width: 120px; height: 60px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px; letter-spacing: 2px; color: var(--dim);
+    position: absolute; inset: 0; margin: auto; width: 112px; height: 112px;
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    font-size: 17px; letter-spacing: 2px; color: var(--dim);
   }
+
+  /* Golf solitaire */
+  #golf-wrap { display: flex; flex-direction: column; justify-content: center; gap: 22px; }
+  #golf-cols { display: flex; gap: 10px; justify-content: center; }
+  .gcol { display: flex; flex-direction: column; align-items: center; gap: 8px; background: transparent; padding: 4px; border-radius: 12px; }
+  .gcard {
+    width: 62px; height: 88px; border: 2px solid var(--dim); border-radius: 10px;
+    display: flex; align-items: center; justify-content: center; font-size: 21px; color: var(--dim);
+  }
+  .gcard.red { color: var(--pink); border-color: var(--pink); }
+  .gcard.blk { color: var(--cyan); border-color: var(--cyan); }
+  .gcard.big { width: 74px; height: 102px; font-size: 26px; }
+  .gcol .count { font-size: 12px; color: var(--dim); letter-spacing: 1px; }
+  .gcol:focus { border-color: var(--focus); }
+  .gcol:focus .gcard { border-color: var(--focus); box-shadow: 0 0 20px rgba(0,229,255,.35); }
+  #golf-base { display: flex; gap: 28px; justify-content: center; align-items: flex-start; }
+  @keyframes deny { 0%,100%{ transform: translateX(0);} 25%{ transform: translateX(-6px);} 75%{ transform: translateX(6px);} }
+  .deny { animation: deny 180ms ease; }
+
+  /* Blackjack */
+  #bj-table { height: 440px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 0 40px; }
+  .bj-row-label { font-size: 14px; color: var(--dim); letter-spacing: 3px; }
+  .bj-hand { display: flex; gap: 10px; min-height: 90px; align-items: center; }
+  .bj-card {
+    width: 58px; height: 86px; border: 2px solid var(--dim); border-radius: 10px;
+    display: flex; align-items: center; justify-content: center; font-size: 19px;
+  }
+  .bj-card.red { color: var(--pink); border-color: var(--pink); }
+  .bj-card.blk { color: var(--cyan); border-color: var(--cyan); }
+  .bj-card.hole { color: var(--dim); border-color: var(--dim); }
+  #bj-msg { font-size: 19px; letter-spacing: 2px; color: var(--amber); min-height: 26px; text-align: center; }
+  #bj-actions { display: flex; gap: 14px; }
+  .bj-btn { min-height: 60px; padding: 0 28px; border: 2px solid var(--dim); border-radius: 12px; font-size: 21px; letter-spacing: 2px; }
+
+  /* Trivia */
+  #trivia-themes { height: 440px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-content: center; padding: 0 40px; }
+  .theme-btn {
+    min-height: 96px; border: 2px solid var(--dim); border-radius: 14px;
+    display: flex; flex-direction: column; gap: 6px; align-items: center; justify-content: center;
+    font-size: 21px; letter-spacing: 2px;
+  }
+  .theme-btn .tglyph { font-size: 28px; }
+  #trivia-quiz { display: none; height: 440px; flex-direction: column; gap: 12px; padding: 0 40px; }
+  #trivia-quiz.on { display: flex; }
+  #trivia-bar-wrap { height: 6px; border: 1px solid #143b40; }
+  #trivia-bar { height: 100%; width: 100%; background: var(--amber); transform-origin: left; }
+  #trivia-q { min-height: 80px; display: flex; align-items: center; font-size: 20px; line-height: 1.35; letter-spacing: 1px; }
+  #trivia-answers { display: flex; flex-direction: column; gap: 10px; }
+  .answer {
+    min-height: 54px; border: 2px solid var(--dim); border-radius: 12px;
+    display: flex; align-items: center; text-align: left; padding: 0 16px;
+    font-size: 18px; letter-spacing: 1px; width: 100%;
+  }
+  .answer.correct { border-color: var(--lime); color: var(--lime); box-shadow: 0 0 22px rgba(109,255,90,.4); }
+  .answer.wrong { border-color: var(--pink); color: var(--pink); }
+  #trivia-progress { font-size: 13px; color: var(--dim); letter-spacing: 2px; text-align: center; }
 
   /* Reaction */
   #react-field { position: relative; width: 440px; height: 380px; border: 2px solid #143b40; border-radius: 16px; }
@@ -190,6 +252,26 @@
         <span class="label">Reflex</span>
         <span class="hi" id="hi-react">HI 0</span>
       </button>
+      <button class="focusable game-row" data-game="runner">
+        <span class="glyph" style="color:var(--lime)">»</span>
+        <span class="label">Runner</span>
+        <span class="hi" id="hi-runner">HI 0</span>
+      </button>
+      <button class="focusable game-row" data-game="golf">
+        <span class="glyph" style="color:var(--cyan)">♠</span>
+        <span class="label">Solitaire</span>
+        <span class="hi" id="hi-golf">HI 0</span>
+      </button>
+      <button class="focusable game-row" data-game="bj">
+        <span class="glyph" style="color:var(--pink)">♥</span>
+        <span class="label">Blackjack</span>
+        <span class="hi" id="hi-bj">HI 0</span>
+      </button>
+      <button class="focusable game-row" data-game="trivia">
+        <span class="glyph" style="color:var(--amber)">?</span>
+        <span class="label">Trivia</span>
+        <span class="hi" id="hi-trivia">HI 0</span>
+      </button>
     </div>
     <div class="hint">SWIPE to move · PINCH to select</div>
   </section>
@@ -223,10 +305,10 @@
     <div class="game-head"><span class="game-name">Simon</span><span class="score" id="simon-score">0</span></div>
     <div class="stage">
       <div id="simon-pad-grid">
-        <div class="pad p0" data-pad="0"></div>
-        <div class="pad p1" data-pad="1"></div>
-        <div class="pad p2" data-pad="2"></div>
-        <div class="pad p3" data-pad="3"></div>
+        <div class="pad p0" data-pad="0">&#9650;</div>
+        <div class="pad p1" data-pad="1">&#9654;</div>
+        <div class="pad p2" data-pad="2">&#9660;</div>
+        <div class="pad p3" data-pad="3">&#9664;</div>
         <div class="simon-center" id="simon-center">PINCH</div>
       </div>
     </div>
@@ -255,6 +337,88 @@
     </div>
   </section>
 
+  <!-- ===== RUNNER ===== -->
+  <section id="runner" class="screen">
+    <div class="game-head"><span class="game-name">Runner</span><span class="score" id="runner-score">0m</span></div>
+    <div class="stage"><canvas id="runner-canvas" width="440" height="440"></canvas></div>
+    <div class="hint">LEFT/RIGHT lanes · UP jump · DOWN slide</div>
+    <div class="overlay" id="runner-over">
+      <div class="big">WIPEOUT</div>
+      <div class="sub" id="runner-final">Distance 0m</div>
+      <button class="focusable btn" data-act="runner-retry">↻ Retry</button>
+      <button class="focusable btn" data-act="menu">⌂ Menu</button>
+    </div>
+  </section>
+
+  <!-- ===== GOLF SOLITAIRE ===== -->
+  <section id="golf" class="screen">
+    <div class="game-head"><span class="game-name">Solitaire</span><span class="score" id="golf-score">0</span></div>
+    <div class="stage">
+      <div id="golf-wrap">
+        <div id="golf-cols"></div>
+        <div id="golf-base">
+          <div class="gcol" id="golf-stock-tile">
+            <div class="gcard blk" id="golf-stock-card">▮</div>
+            <div class="count" id="golf-stock-count">STOCK 16</div>
+          </div>
+          <div class="gcol">
+            <div class="gcard big" id="golf-waste">—</div>
+            <div class="count">WASTE · PLAY ±1</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hint">LEFT/RIGHT pick a pile · PINCH plays · DOWN draws</div>
+    <div class="overlay" id="golf-over">
+      <div class="big" id="golf-result">NO MOVES</div>
+      <div class="sub" id="golf-final">Cards 0/35</div>
+      <button class="focusable btn" data-act="golf-retry">↻ Retry</button>
+      <button class="focusable btn" data-act="menu">⌂ Menu</button>
+    </div>
+  </section>
+
+  <!-- ===== BLACKJACK ===== -->
+  <section id="bj" class="screen">
+    <div class="game-head"><span class="game-name">Blackjack</span><span class="score" id="bj-chips">100</span></div>
+    <div class="stage">
+      <div id="bj-table">
+        <div class="bj-row-label" id="bj-dealer-label">DEALER</div>
+        <div class="bj-hand" id="bj-dealer"></div>
+        <div id="bj-msg">PINCH to deal · BET 10</div>
+        <div class="bj-hand" id="bj-player"></div>
+        <div class="bj-row-label" id="bj-player-label">YOU</div>
+        <div id="bj-actions">
+          <button class="focusable bj-btn" id="bj-hit">HIT</button>
+          <button class="focusable bj-btn" id="bj-stand">STAND</button>
+        </div>
+      </div>
+    </div>
+    <div class="overlay" id="bj-over">
+      <div class="big">BUSTED OUT</div>
+      <div class="sub" id="bj-final">Peak 100</div>
+      <button class="focusable btn" data-act="bj-retry">↻ Retry</button>
+      <button class="focusable btn" data-act="menu">⌂ Menu</button>
+    </div>
+  </section>
+
+  <!-- ===== TRIVIA ===== -->
+  <section id="trivia" class="screen">
+    <div class="game-head"><span class="game-name">Trivia</span><span class="score" id="trivia-score">0</span></div>
+    <div id="trivia-themes"></div>
+    <div id="trivia-quiz">
+      <div id="trivia-bar-wrap"><div id="trivia-bar"></div></div>
+      <div id="trivia-q"></div>
+      <div id="trivia-answers"></div>
+      <div id="trivia-progress">Q 1/8</div>
+    </div>
+    <div class="overlay" id="trivia-over">
+      <div class="big">QUIZ DONE</div>
+      <div class="sub" id="trivia-final">Score 0</div>
+      <button class="focusable btn" data-act="trivia-retry">↻ Themes</button>
+      <button class="focusable btn" data-act="menu">⌂ Menu</button>
+    </div>
+  </section>
+
 </div>
 
 <script>
@@ -279,11 +443,11 @@ function show(id){
   if (f) f.focus();
 }
 
-/* ---- high scores ---- */
-function getHi(k){ return parseInt(localStorage.getItem('hi-'+k)||'0',10); }
-function setHi(k,v){ if(v>getHi(k)){ localStorage.setItem('hi-'+k,String(v)); } refreshHi(); }
+/* ---- high scores (storage may be unavailable in some webviews) ---- */
+function getHi(k){ try { return parseInt(localStorage.getItem('hi-'+k)||'0',10); } catch(e){ return 0; } }
+function setHi(k,v){ try { if(v>getHi(k)) localStorage.setItem('hi-'+k,String(v)); } catch(e){} refreshHi(); }
 function refreshHi(){
-  ['snake','g2048','simon','react'].forEach(k=>{
+  ['snake','g2048','simon','react','runner','golf','bj','trivia'].forEach(k=>{
     const el=document.getElementById('hi-'+k); if(el) el.textContent='HI '+getHi(k);
   });
 }
@@ -315,9 +479,25 @@ function listNav(container, key){
   items[idx].focus();
 }
 
+/* 2-column grid focus mover (launcher + trivia themes) */
+function gridNav(container, key, cols){
+  const items = Array.from(container.querySelectorAll('.focusable'))
+    .filter(el => el.offsetParent !== null);
+  if(!items.length) return;
+  let i = items.indexOf(document.activeElement);
+  if(i===-1){ items[0].focus(); return; }
+  const n = items.length;
+  if(key===DPAD.SELECT){ items[i].click(); return; }
+  if(key===DPAD.LEFT)  i = (i%cols===0) ? Math.min(i+cols-1, n-1) : i-1;
+  if(key===DPAD.RIGHT) i = (i%cols===cols-1 || i===n-1) ? i-(i%cols) : i+1;
+  if(key===DPAD.UP)    i = (i-cols+n)%n;
+  if(key===DPAD.DOWN)  i = (i+cols)%n;
+  items[i].focus();
+}
+
 handlers.launcher = key => {
   if(key===DPAD.SELECT){ document.activeElement.click(); return; }
-  listNav(document.getElementById('menu'), key);
+  gridNav(document.getElementById('menu'), key, 2);
 };
 menuBtns.forEach(b=> b.addEventListener('click', ()=> launch(b.dataset.game)));
 
@@ -330,6 +510,10 @@ document.querySelectorAll('[data-act]').forEach(btn=>{
     else if(a==='g2048-retry'){ start2048(); }
     else if(a==='simon-retry'){ startSimon(); }
     else if(a==='react-retry'){ startReact(); }
+    else if(a==='runner-retry'){ startRunner(); }
+    else if(a==='golf-retry'){ startGolf(); }
+    else if(a==='bj-retry'){ startBJ(); }
+    else if(a==='trivia-retry'){ startTrivia(); }
   });
 });
 
@@ -338,8 +522,12 @@ function launch(game){
   if(game==='g2048'){ show('g2048'); start2048(); }
   if(game==='simon'){ show('simon'); startSimon(); }
   if(game==='react'){ show('react'); startReact(); }
+  if(game==='runner'){ show('runner'); startRunner(); }
+  if(game==='golf'){ show('golf'); startGolf(); }
+  if(game==='bj'){ show('bj'); startBJ(); }
+  if(game==='trivia'){ show('trivia'); startTrivia(); }
 }
-function stopAll(){ stopSnake(); stopSimon(); stopReact(); }
+function stopAll(){ stopSnake(); stopSimon(); stopReact(); stopRunner(); stopBJ(); stopTrivia(); }
 
 /* ============================================================
    SNAKE
@@ -481,9 +669,9 @@ handlers.g2048 = key=>{
 };
 
 /* ============================================================
-   SIMON  (directional input maps to the 4 pads)
-   UP=cyan(0) RIGHT=lime(1) DOWN=amber(2... wait map clearly)
-   We map: UP->0, RIGHT->1, DOWN->2, LEFT->3 ; Enter starts.
+   SIMON  (plus layout: pad positions match the d-pad)
+   UP->0 top/cyan, RIGHT->1 right/lime, DOWN->2 bottom/amber,
+   LEFT->3 left/pink ; Enter starts.
    ============================================================ */
 const padEls = Array.from(document.querySelectorAll('#simon-pad-grid .pad'));
 const simonCenter = document.getElementById('simon-center');
@@ -547,8 +735,10 @@ handlers.simon = key=>{
 const reactField=document.getElementById('react-field');
 const targetEl=document.getElementById('target');
 const reactMsg=document.getElementById('react-msg');
-let reactActive=false, reactHits, reactTimes, reactStarted, reactTimer, reactSpawnAt, reactZone;
-const zonePos = [ {l:30,t:30}, {l:330,t:30}, {l:30,t:270}, {l:330,t:270} ]; // UP,RIGHT,DOWN,LEFT order
+let reactActive=false, reactHits, reactTimes, reactStarted, reactTimer, reactSpawnAt, reactSpawnTimer, reactZone;
+/* Plus layout: each zone sits where its d-pad direction points. */
+const zonePos = [ {l:182,t:20}, {l:344,t:152}, {l:182,t:284}, {l:20,t:152} ]; // UP,RIGHT,DOWN,LEFT
+const zoneGlyph = ['▲','▶','▼','◀'];
 const zoneKey = { ArrowUp:0, ArrowRight:1, ArrowDown:2, ArrowLeft:3 };
 const REACT_TIME = 30000;
 
@@ -560,11 +750,12 @@ function startReact(){
   reactMsg.style.display='flex';
   reactMsg.innerHTML='PINCH to start<br>Match the arrow to the target';
 }
-function stopReact(){ reactActive=false; clearTimeout(reactTimer); clearTimeout(reactSpawnAt); }
+function stopReact(){ reactActive=false; clearTimeout(reactTimer); clearTimeout(reactSpawnTimer); }
 function spawnTarget(){
   reactZone = (Math.random()*4)|0;
   const p = zonePos[reactZone];
   targetEl.style.left=p.l+'px'; targetEl.style.top=p.t+'px';
+  targetEl.textContent = zoneGlyph[reactZone];
   targetEl.style.display='flex';
   reactSpawnAt = performance.now();
 }
@@ -592,9 +783,487 @@ handlers.react = key=>{
     reactTimes.push(Math.round(performance.now()-reactSpawnAt));
     reactHits++; document.getElementById('react-score').textContent=reactHits;
     targetEl.style.display='none';
-    clearTimeout(reactSpawnAt);
-    setTimeout(spawnTarget, 250 + Math.random()*400);
+    clearTimeout(reactSpawnTimer);
+    reactSpawnTimer = setTimeout(spawnTarget, 250 + Math.random()*400);
   }
+};
+
+/* ============================================================
+   SHARED CARDS (Golf Solitaire + Blackjack)
+   ============================================================ */
+const SUIT_CHARS = ['♠','♥','♦','♣'];
+const RANK_CHARS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+function mkDeck(){
+  const d=[];
+  for(let s=0;s<4;s++) for(let r=1;r<=13;r++) d.push({r, s:SUIT_CHARS[s]});
+  for(let i=d.length-1;i>0;i--){ const j=(Math.random()*(i+1))|0; [d[i],d[j]]=[d[j],d[i]]; }
+  return d;
+}
+function cardTxt(c){ return RANK_CHARS[c.r-1]+c.s; }
+function isRed(c){ return c.s==='♥'||c.s==='♦'; }
+function denyEl(el){ el.classList.remove('deny'); void el.offsetWidth; el.classList.add('deny'); setTimeout(()=>el.classList.remove('deny'),220); }
+
+/* ============================================================
+   RUNNER  (3 lanes; LEFT/RIGHT switch, UP jumps hurdles,
+   DOWN slides under bars; blocks must be dodged)
+   ============================================================ */
+const runCv = document.getElementById('runner-canvas');
+const runCtx = runCv.getContext('2d');
+const R_LANES = [73, 220, 367];
+const R_PY = 372, R_PH = 52, R_PW = 56;
+let rLane, rObs, rSpeed, rTicks, rLoop, rJump, rDuck, rDist;
+
+function startRunner(){
+  document.getElementById('runner-over').classList.remove('show');
+  rLane=1; rObs=[]; rSpeed=4.2; rTicks=0; rJump=0; rDuck=0; rDist=0;
+  document.getElementById('runner-score').textContent='0m';
+  clearInterval(rLoop); rLoop=setInterval(runnerTick, 30);
+  drawRunner();
+}
+function stopRunner(){ clearInterval(rLoop); }
+
+function runnerTick(){
+  rTicks++;
+  if(rJump>0) rJump--;
+  if(rDuck>0) rDuck--;
+  rSpeed += 0.0022;
+  rDist += rSpeed*0.09;
+  document.getElementById('runner-score').textContent=(rDist|0)+'m';
+
+  const interval = Math.max(24, (64 - rSpeed*4)|0);
+  if(rTicks % interval === 0){
+    const lane=(Math.random()*3)|0;
+    const roll=Math.random();
+    const type = roll<0.45 ? 'block' : roll<0.75 ? 'hurdle' : 'bar';
+    rObs.push({lane, y:-60, type});
+    if(rSpeed>6.5 && Math.random()<0.35){
+      const l2=(lane+1+((Math.random()*2)|0))%3;
+      rObs.push({lane:l2, y:-60, type:'block'});
+    }
+  }
+
+  rObs.forEach(o=> o.y += rSpeed);
+  rObs = rObs.filter(o=> o.y < 500);
+
+  for(const o of rObs){
+    if(o.lane!==rLane) continue;
+    const oy0=o.y, oy1=o.y+(o.type==='bar'?26:34);
+    if(oy1 < R_PY || oy0 > R_PY+R_PH) continue;
+    if(o.type==='hurdle' && rJump>0) continue;
+    if(o.type==='bar' && rDuck>0) continue;
+    return runnerDead();
+  }
+  drawRunner();
+}
+
+function drawRunner(){
+  runCtx.clearRect(0,0,440,440);
+  // lane dividers
+  runCtx.strokeStyle='#143b40'; runCtx.lineWidth=2; runCtx.setLineDash([10,14]);
+  runCtx.beginPath();
+  runCtx.moveTo(146.5,0); runCtx.lineTo(146.5,440);
+  runCtx.moveTo(293.5,0); runCtx.lineTo(293.5,440);
+  runCtx.stroke(); runCtx.setLineDash([]);
+  // obstacles
+  for(const o of rObs){
+    const x=R_LANES[o.lane];
+    if(o.type==='block'){
+      runCtx.strokeStyle='#ff5ea8'; runCtx.shadowColor='#ff5ea8'; runCtx.shadowBlur=12;
+      runCtx.lineWidth=3; runCtx.strokeRect(x-28,o.y,56,34);
+      runCtx.beginPath(); runCtx.moveTo(x-28,o.y); runCtx.lineTo(x+28,o.y+34);
+      runCtx.moveTo(x+28,o.y); runCtx.lineTo(x-28,o.y+34); runCtx.stroke();
+    } else if(o.type==='hurdle'){
+      runCtx.strokeStyle='#6dff5a'; runCtx.shadowColor='#6dff5a'; runCtx.shadowBlur=10;
+      runCtx.lineWidth=3; runCtx.strokeRect(x-28,o.y+16,56,18);
+    } else {
+      runCtx.strokeStyle='#ffc24b'; runCtx.shadowColor='#ffc24b'; runCtx.shadowBlur=10;
+      runCtx.lineWidth=3; runCtx.strokeRect(x-28,o.y,56,14);
+      runCtx.beginPath();
+      runCtx.moveTo(x-28,o.y+14); runCtx.lineTo(x-28,o.y+26);
+      runCtx.moveTo(x+28,o.y+14); runCtx.lineTo(x+28,o.y+26);
+      runCtx.stroke();
+    }
+  }
+  runCtx.shadowBlur=0;
+  // player
+  const x=R_LANES[rLane];
+  const jumping=rJump>0, ducking=rDuck>0;
+  const h = ducking? 28 : R_PH;
+  const y = (jumping? R_PY-20 : R_PY) + (R_PH-h);
+  runCtx.strokeStyle='#00e5ff'; runCtx.shadowColor='#00e5ff'; runCtx.shadowBlur=16;
+  runCtx.lineWidth=3;
+  runCtx.strokeRect(x-R_PW/2, y, R_PW, h);
+  if(jumping){
+    runCtx.setLineDash([4,6]); runCtx.shadowBlur=0; runCtx.strokeStyle='#4a7d86';
+    runCtx.beginPath(); runCtx.moveTo(x-20,R_PY+R_PH); runCtx.lineTo(x+20,R_PY+R_PH); runCtx.stroke();
+    runCtx.setLineDash([]);
+  }
+  runCtx.shadowBlur=0;
+}
+
+function runnerDead(){
+  stopRunner(); setHi('runner', rDist|0);
+  document.getElementById('runner-final').textContent='Distance '+(rDist|0)+'m';
+  const ov=document.getElementById('runner-over'); ov.classList.add('show');
+  ov.querySelector('.focusable').focus();
+}
+
+handlers.runner = key=>{
+  const ov=document.getElementById('runner-over');
+  if(ov.classList.contains('show')){ listNav(ov,key); return; }
+  if(key===DPAD.LEFT && rLane>0) rLane--;
+  if(key===DPAD.RIGHT && rLane<2) rLane++;
+  if(key===DPAD.UP && rJump===0 && rDuck===0) rJump=17;
+  if(key===DPAD.DOWN && rJump===0) rDuck=20;
+};
+
+/* ============================================================
+   GOLF SOLITAIRE  (7 piles of 5; play cards ±1 rank from the
+   waste, A-K wrap; draw when stuck; clear the board)
+   ============================================================ */
+let gCols, gStock, gWaste, gScore, gFocus;
+
+function startGolf(){
+  document.getElementById('golf-over').classList.remove('show');
+  const deck=mkDeck();
+  gCols=[]; for(let i=0;i<7;i++) gCols.push(deck.splice(0,5));
+  gWaste=[deck.pop()]; gStock=deck; gScore=0; gFocus=3;
+  buildGolfCols(); renderGolf(); focusGolfCol();
+}
+
+function buildGolfCols(){
+  const wrap=document.getElementById('golf-cols');
+  wrap.innerHTML='';
+  for(let i=0;i<7;i++){
+    const b=document.createElement('button');
+    b.className='focusable gcol'; b.dataset.col=i;
+    b.innerHTML='<div class="gcard"></div><div class="count"></div>';
+    b.addEventListener('click', ()=>{ gFocus=i; playGolfCol(i); });
+    wrap.appendChild(b);
+  }
+}
+
+function renderGolf(){
+  document.querySelectorAll('#golf-cols .gcol').forEach((b,i)=>{
+    const col=gCols[i];
+    const cardEl=b.querySelector('.gcard'), cntEl=b.querySelector('.count');
+    if(col.length){
+      const c=col[col.length-1];
+      cardEl.textContent=cardTxt(c);
+      cardEl.className='gcard '+(isRed(c)?'red':'blk');
+      cntEl.textContent=col.length+' LEFT';
+    } else {
+      cardEl.textContent='—'; cardEl.className='gcard';
+      cntEl.textContent='EMPTY';
+    }
+  });
+  const top=gWaste[gWaste.length-1];
+  const wasteEl=document.getElementById('golf-waste');
+  wasteEl.textContent=cardTxt(top);
+  wasteEl.className='gcard big '+(isRed(top)?'red':'blk');
+  document.getElementById('golf-stock-count').textContent='STOCK '+gStock.length;
+  document.getElementById('golf-stock-card').textContent=gStock.length?'▮':'—';
+  document.getElementById('golf-score').textContent=gScore;
+}
+
+function golfLegal(c){
+  const top=gWaste[gWaste.length-1];
+  const d=Math.abs(c.r-top.r);
+  return d===1 || d===12;
+}
+function golfAnyLegal(){ return gCols.some(col=> col.length && golfLegal(col[col.length-1])); }
+
+function playGolfCol(i){
+  const btn=document.querySelectorAll('#golf-cols .gcol')[i];
+  const col=gCols[i];
+  if(!col.length){ denyEl(btn); return; }
+  const c=col[col.length-1];
+  if(!golfLegal(c)){ denyEl(btn); return; }
+  col.pop(); gWaste.push(c); gScore++;
+  renderGolf();
+  if(gCols.every(cl=>cl.length===0)) return golfEnd(true);
+  if(!gStock.length && !golfAnyLegal()) return golfEnd(false);
+}
+
+function golfDraw(){
+  if(gStock.length){
+    gWaste.push(gStock.pop());
+    renderGolf();
+    if(!gStock.length && !golfAnyLegal()) golfEnd(false);
+  } else {
+    denyEl(document.getElementById('golf-stock-tile'));
+  }
+}
+
+function focusGolfCol(){
+  const btns=document.querySelectorAll('#golf-cols .gcol');
+  if(btns[gFocus]) btns[gFocus].focus();
+}
+
+function golfEnd(win){
+  setHi('golf', gScore);
+  document.getElementById('golf-result').textContent = win?'CLEARED!':'NO MOVES';
+  document.getElementById('golf-final').textContent = 'Cards '+gScore+'/35';
+  const ov=document.getElementById('golf-over'); ov.classList.add('show');
+  ov.querySelector('.focusable').focus();
+}
+
+handlers.golf = key=>{
+  const ov=document.getElementById('golf-over');
+  if(ov.classList.contains('show')){ listNav(ov,key); return; }
+  if(key===DPAD.LEFT){ gFocus=(gFocus+6)%7; focusGolfCol(); }
+  if(key===DPAD.RIGHT){ gFocus=(gFocus+1)%7; focusGolfCol(); }
+  if(key===DPAD.SELECT) playGolfCol(gFocus);
+  if(key===DPAD.DOWN || key===DPAD.UP) golfDraw();
+};
+
+/* ============================================================
+   BLACKJACK  (bet 10 a hand; dealer stands on 17; BJ pays 3:2;
+   bust out to end the run — high score is peak chips)
+   ============================================================ */
+let bjShoe=[], bjP, bjD, bjChips, bjPeak, bjPhase, bjNextT;
+
+function bjDrawCard(){ if(bjShoe.length<15) bjShoe=mkDeck(); return bjShoe.pop(); }
+function bjVal(hand){
+  let v=0, aces=0;
+  for(const c of hand){ v += c.r>10?10:(c.r===1?11:c.r); if(c.r===1) aces++; }
+  while(v>21 && aces>0){ v-=10; aces--; }
+  return v;
+}
+
+function startBJ(){
+  document.getElementById('bj-over').classList.remove('show');
+  clearTimeout(bjNextT);
+  bjShoe=mkDeck(); bjChips=100; bjPeak=100; bjPhase='idle'; bjP=[]; bjD=[];
+  renderBJ(true);
+  bjMsg('PINCH to deal · BET 10');
+}
+function stopBJ(){ clearTimeout(bjNextT); }
+function bjMsg(t){ document.getElementById('bj-msg').textContent=t; }
+
+function renderBJ(hideHole){
+  const dEl=document.getElementById('bj-dealer'), pEl=document.getElementById('bj-player');
+  dEl.innerHTML=''; pEl.innerHTML='';
+  bjD.forEach((c,i)=>{
+    const s=document.createElement('div');
+    if(i===1 && hideHole){ s.className='bj-card hole'; s.textContent='▮'; }
+    else { s.className='bj-card '+(isRed(c)?'red':'blk'); s.textContent=cardTxt(c); }
+    dEl.appendChild(s);
+  });
+  bjP.forEach(c=>{
+    const s=document.createElement('div');
+    s.className='bj-card '+(isRed(c)?'red':'blk'); s.textContent=cardTxt(c);
+    pEl.appendChild(s);
+  });
+  document.getElementById('bj-dealer-label').textContent =
+    bjD.length? ('DEALER · '+(hideHole?'?':bjVal(bjD))) : 'DEALER';
+  document.getElementById('bj-player-label').textContent =
+    bjP.length? ('YOU · '+bjVal(bjP)) : 'YOU';
+  document.getElementById('bj-chips').textContent=bjChips;
+}
+
+function bjDeal(){
+  bjP=[bjDrawCard(),bjDrawCard()];
+  bjD=[bjDrawCard(),bjDrawCard()];
+  bjPhase='player';
+  renderBJ(true);
+  bjMsg('HIT or STAND');
+  if(bjVal(bjP)===21){ bjSettle(); return; }
+  document.getElementById('bj-hit').focus();
+}
+
+function bjHit(){
+  if(bjPhase!=='player') return;
+  bjP.push(bjDrawCard());
+  renderBJ(true);
+  if(bjVal(bjP)>21) bjSettle();
+}
+
+function bjSettle(){
+  bjPhase='settle';
+  const pv=bjVal(bjP);
+  let dv=bjVal(bjD);
+  const playerBJ = pv===21 && bjP.length===2;
+  if(pv<=21 && !playerBJ){ while(bjVal(bjD)<17) bjD.push(bjDrawCard()); dv=bjVal(bjD); }
+  const dealerBJ = dv===21 && bjD.length===2;
+  let delta, text;
+  if(pv>21){ delta=-10; text='BUST −10'; }
+  else if(playerBJ && dealerBJ){ delta=0; text='BOTH BLACKJACK · PUSH'; }
+  else if(playerBJ){ delta=15; text='BLACKJACK! +15'; }
+  else if(dv>21){ delta=10; text='DEALER BUSTS +10'; }
+  else if(pv>dv){ delta=10; text='WIN '+pv+' v '+dv+' · +10'; }
+  else if(pv<dv){ delta=-10; text='LOSE '+pv+' v '+dv+' · −10'; }
+  else { delta=0; text='PUSH '+pv; }
+  bjChips+=delta; if(bjChips>bjPeak) bjPeak=bjChips;
+  renderBJ(false);
+  bjMsg(text);
+  bjNextT=setTimeout(()=>{
+    if(bjChips<10){ bjOut(); }
+    else { bjPhase='idle'; bjMsg('PINCH to deal · BET 10 · CHIPS '+bjChips); }
+  },1600);
+}
+
+function bjOut(){
+  setHi('bj', bjPeak);
+  document.getElementById('bj-final').textContent='Peak '+bjPeak+' chips';
+  const ov=document.getElementById('bj-over'); ov.classList.add('show');
+  ov.querySelector('.focusable').focus();
+}
+
+document.getElementById('bj-hit').addEventListener('click', bjHit);
+document.getElementById('bj-stand').addEventListener('click', ()=>{ if(bjPhase==='player') bjSettle(); });
+
+handlers.bj = key=>{
+  const ov=document.getElementById('bj-over');
+  if(ov.classList.contains('show')){ listNav(ov,key); return; }
+  if(bjPhase==='idle'){ if(key===DPAD.SELECT) bjDeal(); return; }
+  if(bjPhase!=='player') return;
+  if(key===DPAD.SELECT){ document.activeElement.click(); return; }
+  listNav(document.getElementById('bj-actions'), key);
+};
+
+/* ============================================================
+   TRIVIA  (pick a theme; 8 questions, 10s each, +10 per correct)
+   ============================================================ */
+const TRIVIA_THEMES = [
+  { name:'BALLPARK', glyph:'⌾', color:'var(--lime)', qs:[
+    {q:'How many outs end a half-inning?', a:['2','3','4','1'], c:1},
+    {q:'Little League base paths are how long?', a:['50 feet','60 feet','75 feet','90 feet'], c:1},
+    {q:'A perfect game means…', a:['No hits allowed','No runs allowed','No batter reaches base','27 strikeouts'], c:2},
+    {q:'A "can of corn" is…', a:['An easy fly ball','A wild pitch','A bunt','A double play'], c:0},
+    {q:'How many fielders per team are on the field?', a:['8','9','10','11'], c:1},
+    {q:'How many balls draw a walk?', a:['3','4','5','2'], c:1},
+    {q:'MLB mound to home plate distance?', a:["59 ft","60 ft 6 in","66 ft","54 ft"], c:1},
+    {q:'A grand slam scores how many runs?', a:['2','3','4','5'], c:2},
+  ]},
+  { name:'CYCLING', glyph:'∞', color:'var(--cyan)', qs:[
+    {q:'Tour de France race leader wears…', a:['Green jersey','Yellow jersey','Polka dots','White jersey'], c:1},
+    {q:'FTP stands for…', a:['Fastest Time Possible','Functional Threshold Power','Full Throttle Pace','Final Tempo Push'], c:1},
+    {q:'Drafting behind a rider saves roughly…', a:['5% effort','15% effort','30% effort','60% effort'], c:2},
+    {q:'Watts measure a rider\'s…', a:['Cadence','Speed','Heart rate','Power'], c:3},
+    {q:'The best-climber jersey pattern is…', a:['Stripes','Polka dots','Stars','Checkers'], c:1},
+    {q:'The peloton is…', a:['The main pack of riders','A hill sprint','A team car','The finish arch'], c:0},
+    {q:'Cadence is measured in…', a:['Watts','RPM','BPM','KPH'], c:1},
+    {q:'Best Bike Split builds…', a:['Race pacing plans','Bike frames','Wheel sets','Race courses'], c:0},
+  ]},
+  { name:'SPACE', glyph:'✦', color:'var(--amber)', qs:[
+    {q:'Which planet is the Red Planet?', a:['Venus','Mars','Jupiter','Mercury'], c:1},
+    {q:'The closest star to Earth is…', a:['Proxima Centauri','Polaris','The Sun','Sirius'], c:2},
+    {q:'How many moons does Mars have?', a:['0','1','2','4'], c:2},
+    {q:'First person to walk on the Moon?', a:['Buzz Aldrin','Neil Armstrong','John Glenn','Yuri Gagarin'], c:1},
+    {q:'The largest planet in our solar system?', a:['Saturn','Neptune','Earth','Jupiter'], c:3},
+    {q:'Sunlight reaches Earth in about…', a:['8 seconds','8 minutes','8 hours','8 days'], c:1},
+    {q:'Our galaxy is called…', a:['Andromeda','The Milky Way','Orion','Centaurus'], c:1},
+    {q:'Which planet has the famous rings?', a:['Saturn','Mars','Venus','Mercury'], c:0},
+  ]},
+  { name:'RETRO GAMES', glyph:'▚', color:'var(--pink)', qs:[
+    {q:'How many ghosts chase Pac-Man?', a:['3','4','5','6'], c:1},
+    {q:'Mario\'s brother is named…', a:['Wario','Toad','Luigi','Yoshi'], c:2},
+    {q:'Tetris pieces are called…', a:['Tetrominoes','Quadblocks','Tetrads','Bricktiles'], c:0},
+    {q:'Sonic the Hedgehog collects…', a:['Coins','Rings','Stars','Gems'], c:1},
+    {q:'The Konami code begins…', a:['Left Left Right Right','Up Up Down Down','A B A B','Down Up Down Up'], c:1},
+    {q:'Donkey Kong\'s hero was first named…', a:['Jumpman','Mario','Plumber Joe','Stanley'], c:0},
+    {q:'Space Invaders came from which country?', a:['USA','France','Japan','Russia'], c:2},
+    {q:'The hero of The Legend of Zelda is…', a:['Zelda','Ganon','Link','Epona'], c:2},
+  ]},
+];
+let tThemeIdx, tQs, tIdx, tScore, tTickT, tAdvanceT, tAccepting, tDeadline;
+
+function buildTriviaThemes(){
+  const wrap=document.getElementById('trivia-themes');
+  wrap.innerHTML='';
+  TRIVIA_THEMES.forEach((t,i)=>{
+    const b=document.createElement('button');
+    b.className='focusable theme-btn';
+    b.innerHTML='<span class="tglyph" style="color:'+t.color+'">'+t.glyph+'</span><span>'+t.name+'</span>';
+    b.addEventListener('click', ()=> pickTheme(i));
+    wrap.appendChild(b);
+  });
+}
+buildTriviaThemes();
+
+function startTrivia(){
+  document.getElementById('trivia-over').classList.remove('show');
+  clearInterval(tTickT); clearTimeout(tAdvanceT);
+  tScore=0; document.getElementById('trivia-score').textContent='0';
+  document.getElementById('trivia-quiz').classList.remove('on');
+  document.getElementById('trivia-themes').style.display='grid';
+  const first=document.querySelector('#trivia-themes .focusable');
+  if(first) first.focus();
+}
+function stopTrivia(){ clearInterval(tTickT); clearTimeout(tAdvanceT); }
+
+function pickTheme(i){
+  tThemeIdx=i;
+  tQs = TRIVIA_THEMES[i].qs.slice();
+  for(let k=tQs.length-1;k>0;k--){ const j=(Math.random()*(k+1))|0; [tQs[k],tQs[j]]=[tQs[j],tQs[k]]; }
+  tIdx=0; tScore=0;
+  document.getElementById('trivia-score').textContent='0';
+  document.getElementById('trivia-themes').style.display='none';
+  document.getElementById('trivia-quiz').classList.add('on');
+  nextTriviaQ();
+}
+
+function nextTriviaQ(){
+  if(tIdx>=tQs.length) return triviaEnd();
+  const item=tQs[tIdx];
+  const order=[0,1,2,3];
+  for(let k=3;k>0;k--){ const j=(Math.random()*(k+1))|0; [order[k],order[j]]=[order[j],order[k]]; }
+  document.getElementById('trivia-q').textContent=item.q;
+  document.getElementById('trivia-progress').textContent='Q '+(tIdx+1)+'/'+tQs.length;
+  const wrap=document.getElementById('trivia-answers');
+  wrap.innerHTML='';
+  order.forEach(ai=>{
+    const b=document.createElement('button');
+    b.className='focusable answer';
+    b.textContent=item.a[ai];
+    b.dataset.correct = (ai===item.c) ? '1' : '';
+    b.addEventListener('click', ()=> answerTrivia(b));
+    wrap.appendChild(b);
+  });
+  wrap.querySelector('.focusable').focus();
+  tAccepting=true;
+  tDeadline=performance.now()+10000;
+  document.getElementById('trivia-bar').style.transform='scaleX(1)';
+  clearInterval(tTickT);
+  tTickT=setInterval(()=>{
+    const left=Math.max(0,tDeadline-performance.now());
+    document.getElementById('trivia-bar').style.transform='scaleX('+(left/10000)+')';
+    if(left<=0) answerTrivia(null);
+  },100);
+}
+
+function answerTrivia(btn){
+  if(!tAccepting) return;
+  tAccepting=false; clearInterval(tTickT);
+  const wrap=document.getElementById('trivia-answers');
+  wrap.querySelectorAll('.answer').forEach(b=>{
+    if(b.dataset.correct==='1') b.classList.add('correct');
+  });
+  if(btn && btn.dataset.correct==='1'){
+    tScore+=10;
+    document.getElementById('trivia-score').textContent=tScore;
+  } else if(btn){
+    btn.classList.add('wrong');
+  }
+  tAdvanceT=setTimeout(()=>{ tIdx++; nextTriviaQ(); },900);
+}
+
+function triviaEnd(){
+  setHi('trivia', tScore);
+  document.getElementById('trivia-final').textContent=
+    'Score '+tScore+' / '+(tQs.length*10)+' · '+TRIVIA_THEMES[tThemeIdx].name;
+  const ov=document.getElementById('trivia-over'); ov.classList.add('show');
+  ov.querySelector('.focusable').focus();
+}
+
+handlers.trivia = key=>{
+  const ov=document.getElementById('trivia-over');
+  if(ov.classList.contains('show')){ listNav(ov,key); return; }
+  const quizOn=document.getElementById('trivia-quiz').classList.contains('on');
+  if(!quizOn){ gridNav(document.getElementById('trivia-themes'), key, 2); return; }
+  if(key===DPAD.SELECT){ document.activeElement.click(); return; }
+  listNav(document.getElementById('trivia-answers'), key);
 };
 
 </script>

@@ -51,14 +51,68 @@
           </div>
         </div>
 
-        <aside class="app-highlight" aria-labelledby="featured-app-title">
-          <p class="eyebrow">Featured app</p>
-          <h2 id="featured-app-title">Ultimate Walk-Up Music</h2>
-          <p>
-            Custom walk-up music, player intros, and game-day audio for youth
-            baseball and softball teams.
-          </p>
-          <a href="https://ultimatewalkup.com/">Visit UltimateWalkUp.com</a>
+        <aside class="app-highlight" aria-label="Featured apps" data-rotator>
+          <p class="eyebrow">Featured apps</p>
+          <div class="featured-slides">
+            <div class="featured-slide active">
+              <img
+                class="featured-icon"
+                src="assets/ultimate-walk-up-icon.png"
+                alt=""
+                width="72"
+                height="72"
+              >
+              <h2>Ultimate Walk-Up Music</h2>
+              <p>
+                Custom walk-up music, player intros, and game-day audio for
+                youth baseball and softball teams.
+              </p>
+              <a href="https://ultimatewalkup.com/">Visit UltimateWalkUp.com</a>
+            </div>
+            <div class="featured-slide">
+              <img
+                class="featured-icon"
+                src="assets/best-bike-split-icon.png"
+                alt=""
+                width="72"
+                height="72"
+              >
+              <h2>Best Bike Split</h2>
+              <p>
+                Cycling race planning, pacing, workouts, and ride execution
+                on your phone.
+              </p>
+              <a href="https://apps.apple.com/us/app/best-bike-split/id6766100294">
+                View on the App Store
+              </a>
+            </div>
+            <div class="featured-slide">
+              <div class="app-mark featured-mark" aria-hidden="true">AR</div>
+              <h2>Meta Display</h2>
+              <p>
+                Lightweight web apps and games for Meta smart glasses,
+                compact displays, and fast interaction.
+              </p>
+              <a href="meta-display/">View Meta Display projects</a>
+            </div>
+          </div>
+          <div class="featured-dots">
+            <button
+              type="button"
+              class="dot active"
+              aria-label="Show Ultimate Walk-Up Music"
+            ></button>
+            <button
+              type="button"
+              class="dot"
+              aria-label="Show Best Bike Split"
+            ></button>
+            <button
+              type="button"
+              class="dot"
+              aria-label="Show Meta Display"
+            ></button>
+          </div>
         </aside>
       </section>
 
@@ -150,5 +204,55 @@
       <span>&copy; 2026 Caffeinated Innovations LLC. All rights reserved.</span>
       <a href="mailto:support@caffeinatedinnovations.com">Contact</a>
     </footer>
+
+    <script>
+      (function () {
+        var rotator = document.querySelector("[data-rotator]");
+        if (!rotator) return;
+        var slides = rotator.querySelectorAll(".featured-slide");
+        var dots = rotator.querySelectorAll(".featured-dots .dot");
+        var index = 0;
+        var timer = null;
+        var reducedMotion = window.matchMedia(
+          "(prefers-reduced-motion: reduce)"
+        ).matches;
+
+        function showSlide(n) {
+          index = n;
+          for (var i = 0; i < slides.length; i++) {
+            slides[i].classList.toggle("active", i === n);
+            dots[i].classList.toggle("active", i === n);
+          }
+        }
+
+        function play() {
+          if (reducedMotion || timer) return;
+          timer = window.setInterval(function () {
+            showSlide((index + 1) % slides.length);
+          }, 6000);
+        }
+
+        function pause() {
+          window.clearInterval(timer);
+          timer = null;
+        }
+
+        for (var i = 0; i < dots.length; i++) {
+          (function (n) {
+            dots[n].addEventListener("click", function () {
+              showSlide(n);
+              pause();
+              play();
+            });
+          })(i);
+        }
+
+        rotator.addEventListener("mouseenter", pause);
+        rotator.addEventListener("mouseleave", play);
+        rotator.addEventListener("focusin", pause);
+        rotator.addEventListener("focusout", play);
+        play();
+      })();
+    </script>
   </body>
 </html>
