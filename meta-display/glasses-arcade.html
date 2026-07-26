@@ -63,15 +63,15 @@
   }
 
   .game-row {
-    display: flex; align-items: center; gap: 12px;
-    min-height: 84px;
-    padding: 0 16px;
+    display: flex; align-items: center; gap: 10px;
+    min-height: 72px;
+    padding: 0 14px;
     border-radius: 14px;
     border: 2px solid var(--dim);
     width: 100%; box-sizing: border-box;
   }
-  .game-row .glyph { font-size: 28px; width: 36px; text-align: center; flex-shrink: 0; }
-  .game-row .label { font-size: 20px; letter-spacing: 1px; }
+  .game-row .glyph { font-size: 24px; width: 32px; text-align: center; flex-shrink: 0; }
+  .game-row .label { font-size: 18px; letter-spacing: 1px; }
   .game-row .hi { font-size: 12px; color: var(--dim); margin-left: auto; letter-spacing: 1px; flex-shrink: 0; }
 
   .focusable:focus {
@@ -156,30 +156,49 @@
     font-size: 17px; letter-spacing: 2px; color: var(--dim);
   }
 
-  /* Golf solitaire */
-  #golf-wrap { display: flex; flex-direction: column; justify-content: center; gap: 22px; }
-  #golf-cols { display: flex; gap: 10px; justify-content: center; }
-  .gcol { display: flex; flex-direction: column; align-items: center; gap: 8px; background: transparent; padding: 4px; border-radius: 12px; }
-  .gcard {
-    width: 62px; height: 88px; border: 2px solid var(--dim); border-radius: 10px;
-    display: flex; align-items: center; justify-content: center; font-size: 21px; color: var(--dim);
+  /* Klondike solitaire */
+  #sol-wrap { display: flex; flex-direction: column; gap: 14px; padding-top: 4px; }
+  #sol-top { display: flex; gap: 6px; justify-content: center; }
+  .stile {
+    width: 58px; height: 76px; border: 2px solid var(--dim); border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; color: var(--dim); position: relative;
   }
-  .gcard.red { color: var(--pink); border-color: var(--pink); }
-  .gcard.blk { color: var(--cyan); border-color: var(--cyan); }
-  .gcard.big { width: 74px; height: 102px; font-size: 26px; }
-  .gcol .count { font-size: 12px; color: var(--dim); letter-spacing: 1px; }
-  .gcol:focus { border-color: var(--focus); }
-  .gcol:focus .gcard { border-color: var(--focus); box-shadow: 0 0 20px rgba(0,229,255,.35); }
-  /* Playable piles glow lime; dead piles fade — the legality math is done
-     for the player, at a glance. */
-  .gcol.playable { border-color: rgba(109,255,90,.55); }
-  .gcol.dead .gcard { opacity: .4; }
+  .stile .cnt { position: absolute; bottom: -16px; font-size: 11px; color: var(--dim); letter-spacing: 1px; }
+  #sol-gap { width: 20px; }
+  #sol-tab { display: flex; gap: 10px; justify-content: center; margin-top: 14px; }
+  .scol { position: relative; width: 58px; min-height: 80px; border-radius: 8px; }
+  .scol.focus { outline: 2px solid var(--focus); outline-offset: 3px; }
+  .stile.focus { outline: 2px solid var(--focus); outline-offset: 3px; }
+  .scard {
+    position: absolute; left: 0; width: 58px; height: 76px;
+    border: 2px solid var(--dim); border-radius: 8px; background: #000;
+    display: flex; align-items: flex-start; justify-content: center;
+    padding-top: 3px; font-size: 15px; color: var(--dim);
+  }
+  .scard.red { color: var(--pink); border-color: var(--pink); }
+  .scard.blk { color: var(--cyan); border-color: var(--cyan); }
+  .scard.down { color: #2e565c; border-color: #2e565c; }
+  .scard.sel { box-shadow: 0 0 18px rgba(0,229,255,.55); border-color: var(--focus); }
+  .scard.carry, .stile.carry { border-color: var(--lime); color: var(--lime); box-shadow: 0 0 20px rgba(109,255,90,.5); }
+
+  /* Trail */
+  #trail-body { height: 440px; display: flex; flex-direction: column; gap: 12px; padding: 0 40px; justify-content: center; }
+  #trail-stats, #trail-party { font-size: 15px; color: var(--dim); letter-spacing: 1px; }
+  #trail-log { min-height: 104px; font-size: 18px; line-height: 1.5; color: var(--ink); letter-spacing: 1px; }
+  #trail-hunt { font-size: 64px; text-align: center; color: var(--lime); min-height: 84px; display: none; text-shadow: 0 0 22px rgba(109,255,90,.5); }
+  #trail-actions { display: flex; flex-direction: column; gap: 10px; }
+  .trail-btn {
+    min-height: 52px; border: 2px solid var(--dim); border-radius: 12px;
+    font-size: 19px; letter-spacing: 2px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  #sol-msg { text-align: center; font-size: 13px; color: var(--dim); letter-spacing: 1px; min-height: 16px; margin-top: 18px; }
   @keyframes stockpulse {
     0%,100% { box-shadow: 0 0 6px rgba(0,229,255,.2); }
     50% { box-shadow: 0 0 26px rgba(0,229,255,.7); }
   }
-  #golf-stock-tile.nudge .gcard { animation: stockpulse 1.1s ease infinite; border-color: var(--cyan); color: var(--cyan); }
-  #golf-base { display: flex; gap: 28px; justify-content: center; align-items: flex-start; }
+  .stile.nudge { animation: stockpulse 1.1s ease infinite; border-color: var(--cyan); color: var(--cyan); }
   @keyframes deny { 0%,100%{ transform: translateX(0);} 25%{ transform: translateX(-6px);} 75%{ transform: translateX(6px);} }
   .deny { animation: deny 180ms ease; }
 
@@ -266,10 +285,10 @@
         <span class="label">Runner</span>
         <span class="hi" id="hi-runner">HI 0</span>
       </button>
-      <button class="focusable game-row" data-game="golf">
+      <button class="focusable game-row" data-game="sol">
         <span class="glyph" style="color:var(--cyan)">♠</span>
         <span class="label">Solitaire</span>
-        <span class="hi" id="hi-golf">HI 0</span>
+        <span class="hi" id="hi-sol">HI 0</span>
       </button>
       <button class="focusable game-row" data-game="bj">
         <span class="glyph" style="color:var(--pink)">♥</span>
@@ -280,6 +299,11 @@
         <span class="glyph" style="color:var(--amber)">?</span>
         <span class="label">Trivia</span>
         <span class="hi" id="hi-trivia">HI 0</span>
+      </button>
+      <button class="focusable game-row" data-game="trail">
+        <span class="glyph" style="color:var(--amber)">△</span>
+        <span class="label">Trail</span>
+        <span class="hi" id="hi-trail">HI 0</span>
       </button>
     </div>
     <div class="hint">SWIPE to move · PINCH to select</div>
@@ -359,36 +383,35 @@
     </div>
   </section>
 
-  <!-- ===== GOLF SOLITAIRE ===== -->
-  <section id="golf" class="screen">
-    <div class="game-head"><span class="game-name">Golf Solitaire</span><span class="score" id="golf-score">0</span></div>
+  <!-- ===== SOLITAIRE (KLONDIKE) ===== -->
+  <section id="sol" class="screen">
+    <div class="game-head"><span class="game-name">Solitaire</span><span class="score" id="sol-score">0</span></div>
     <div class="stage">
-      <div id="golf-wrap">
-        <div id="golf-cols"></div>
-        <div id="golf-base">
-          <div class="gcol" id="golf-stock-tile">
-            <div class="gcard blk" id="golf-stock-card">▮</div>
-            <div class="count" id="golf-stock-count">STOCK 16</div>
-          </div>
-          <div class="gcol">
-            <div class="gcard big" id="golf-waste">—</div>
-            <div class="count" id="golf-waste-hint">PLAY ±1</div>
-          </div>
+      <div id="sol-wrap">
+        <div id="sol-top">
+          <div class="stile" id="sol-stock">▮<span class="cnt" id="sol-stock-cnt">24</span></div>
+          <div class="stile" id="sol-waste">—</div>
+          <div id="sol-gap"></div>
+          <div class="stile" id="sol-f0">♠</div>
+          <div class="stile" id="sol-f1">♥</div>
+          <div class="stile" id="sol-f2">♦</div>
+          <div class="stile" id="sol-f3">♣</div>
         </div>
+        <div id="sol-tab"></div>
+        <div id="sol-msg"></div>
       </div>
     </div>
-    <div class="hint">Bright piles are playable · PINCH plays · DOWN draws</div>
-    <div class="overlay" id="golf-help">
-      <div class="big">GOLF SOLITAIRE</div>
-      <div class="sub">Clear all 35 cards from the 7 piles.</div>
-      <div class="sub">Play any pile exactly ONE rank above or<br>below the waste card. A and K wrap.</div>
-      <div class="sub">Bright piles are playable · DOWN draws a card</div>
-      <button class="focusable btn" data-act="golf-begin">▶ Play</button>
+    <div class="overlay" id="sol-help">
+      <div class="big">SOLITAIRE</div>
+      <div class="sub">Build DOWN on the table, alternating colors.<br>Send A → K of each suit up to the foundations.</div>
+      <div class="sub">PINCH grabs a card or stack · PINCH again drops it.<br>Aces and ready cards fly up automatically.</div>
+      <div class="sub">UP/DOWN picks how much of a stack to grab.</div>
+      <button class="focusable btn" data-act="sol-begin">▶ Play</button>
     </div>
-    <div class="overlay" id="golf-over">
-      <div class="big" id="golf-result">NO MOVES</div>
-      <div class="sub" id="golf-final">Cards 0/35</div>
-      <button class="focusable btn" data-act="golf-retry">↻ Retry</button>
+    <div class="overlay" id="sol-over">
+      <div class="big" id="sol-result">YOU WIN!</div>
+      <div class="sub" id="sol-final">All 52 cards home</div>
+      <button class="focusable btn" data-act="sol-retry">↻ New Deal</button>
       <button class="focusable btn" data-act="menu">⌂ Menu</button>
     </div>
   </section>
@@ -413,6 +436,25 @@
       <div class="big">BUSTED OUT</div>
       <div class="sub" id="bj-final">Peak 100</div>
       <button class="focusable btn" data-act="bj-retry">↻ Retry</button>
+      <button class="focusable btn" data-act="menu">⌂ Menu</button>
+    </div>
+  </section>
+
+  <!-- ===== TRAIL ===== -->
+  <section id="trail" class="screen">
+    <div class="game-head"><span class="game-name">Glass Trail</span><span class="score" id="trail-miles">0 MI</span></div>
+    <div id="trail-body">
+      <div id="trail-stats"></div>
+      <div id="trail-party"></div>
+      <div id="trail-log"></div>
+      <div id="trail-hunt"></div>
+      <div id="trail-actions"></div>
+    </div>
+    <div class="hint">PINCH chooses · reach 2000 miles</div>
+    <div class="overlay" id="trail-over">
+      <div class="big" id="trail-result">THE TRAIL</div>
+      <div class="sub" id="trail-final"></div>
+      <button class="focusable btn" data-act="trail-retry">↻ New Journey</button>
       <button class="focusable btn" data-act="menu">⌂ Menu</button>
     </div>
   </section>
@@ -463,7 +505,7 @@ function show(id){
 function getHi(k){ try { return parseInt(localStorage.getItem('hi-'+k)||'0',10); } catch(e){ return 0; } }
 function setHi(k,v){ try { if(v>getHi(k)) localStorage.setItem('hi-'+k,String(v)); } catch(e){} refreshHi(); }
 function refreshHi(){
-  ['snake','g2048','simon','react','runner','golf','bj','trivia'].forEach(k=>{
+  ['snake','g2048','simon','react','runner','sol','bj','trivia','trail'].forEach(k=>{
     const el=document.getElementById('hi-'+k); if(el) el.textContent='HI '+getHi(k);
   });
 }
@@ -527,11 +569,11 @@ document.querySelectorAll('[data-act]').forEach(btn=>{
     else if(a==='simon-retry'){ startSimon(); }
     else if(a==='react-retry'){ startReact(); }
     else if(a==='runner-retry'){ startRunner(); }
-    else if(a==='golf-retry'){ startGolf(); }
-    else if(a==='golf-begin'){
-      document.getElementById('golf-help').classList.remove('show');
-      focusGolfCol();
+    else if(a==='sol-retry'){ startSol(); }
+    else if(a==='sol-begin'){
+      document.getElementById('sol-help').classList.remove('show');
     }
+    else if(a==='trail-retry'){ startTrail(); }
     else if(a==='bj-retry'){ startBJ(); }
     else if(a==='trivia-retry'){ startTrivia(); }
   });
@@ -543,11 +585,12 @@ function launch(game){
   if(game==='simon'){ show('simon'); startSimon(); }
   if(game==='react'){ show('react'); startReact(); }
   if(game==='runner'){ show('runner'); startRunner(); }
-  if(game==='golf'){ show('golf'); startGolf(true); }
+  if(game==='sol'){ show('sol'); startSol(true); }
   if(game==='bj'){ show('bj'); startBJ(); }
   if(game==='trivia'){ show('trivia'); startTrivia(); }
+  if(game==='trail'){ show('trail'); startTrail(); }
 }
-function stopAll(){ stopSnake(); stopSimon(); stopReact(); stopRunner(); stopBJ(); stopTrivia(); }
+function stopAll(){ stopSnake(); stopSimon(); stopReact(); stopRunner(); stopBJ(); stopTrivia(); stopTrail(); }
 
 /* ============================================================
    SNAKE
@@ -809,7 +852,7 @@ handlers.react = key=>{
 };
 
 /* ============================================================
-   SHARED CARDS (Golf Solitaire + Blackjack)
+   SHARED CARDS (Solitaire + Blackjack)
    ============================================================ */
 const SUIT_CHARS = ['♠','♥','♦','♣'];
 const RANK_CHARS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
@@ -938,124 +981,214 @@ handlers.runner = key=>{
 };
 
 /* ============================================================
-   GOLF SOLITAIRE  (7 piles of 5; play cards ±1 rank from the
-   waste, A-K wrap; draw when stuck; clear the board)
+   SOLITAIRE  (Klondike, draw-1, d-pad native)
+   Browsing: LEFT/RIGHT over [stock, waste, 7 columns]; UP/DOWN
+   choose how deep into a column's face-up run to grab.
+   PINCH: on stock draws; on a foundation-ready card sends it up
+   automatically (aces fly home); otherwise grabs.
+   Carrying: LEFT/RIGHT pick a column, PINCH drops (dropping on
+   the origin cancels), UP sends a single carried card up.
    ============================================================ */
-let gCols, gStock, gWaste, gScore, gFocus;
+let sTab, sStock, sWaste, sFound, sPos, sDepth, sCarry;
 
-function startGolf(showHelp){
-  document.getElementById('golf-over').classList.remove('show');
-  const deck=mkDeck();
-  gCols=[]; for(let i=0;i<7;i++) gCols.push(deck.splice(0,5));
-  gWaste=[deck.pop()]; gStock=deck; gScore=0; gFocus=3;
-  buildGolfCols(); renderGolf();
-  const help=document.getElementById('golf-help');
-  if(showHelp){
-    help.classList.add('show');
-    help.querySelector('.focusable').focus();
+function suitIdx(s){ return SUIT_CHARS.indexOf(s); }
+function solFoundTotal(){ return sFound[0].length+sFound[1].length+sFound[2].length+sFound[3].length; }
+function solFaceupRun(col){ let n=0; for(let i=col.length-1;i>=0&&col[i].up;i--) n++; return n; }
+
+function startSol(showHelp){
+  document.getElementById('sol-over').classList.remove('show');
+  const d=mkDeck();
+  sTab=[];
+  for(let c=0;c<7;c++){
+    const col=[];
+    for(let k=0;k<=c;k++){ const card=d.pop(); card.up=(k===c); col.push(card); }
+    sTab.push(col);
+  }
+  sStock=d; sWaste=[]; sFound=[[],[],[],[]];
+  sPos=0; sDepth=0; sCarry=null;
+  renderSol();
+  const help=document.getElementById('sol-help');
+  if(showHelp){ help.classList.add('show'); help.querySelector('.focusable').focus(); }
+  else help.classList.remove('show');
+}
+
+function solCarried(){
+  if(!sCarry) return [];
+  if(sCarry.type==='waste') return sWaste.length?[sWaste[sWaste.length-1]]:[];
+  const col=sTab[sCarry.col];
+  return col.slice(col.length-sCarry.count);
+}
+function solFlipTop(ci){
+  const col=sTab[ci];
+  if(col.length && !col[col.length-1].up) col[col.length-1].up=true;
+}
+function solFoundOK(c){ return c.r === sFound[suitIdx(c.s)].length+1; }
+function solTabOK(cards, ci){
+  const head=cards[0], col=sTab[ci];
+  if(!col.length) return head.r===13;
+  const top=col[col.length-1];
+  return top.up && isRed(top)!==isRed(head) && head.r===top.r-1;
+}
+function solRemoveCarried(){
+  if(sCarry.type==='waste'){ sWaste.pop(); }
+  else {
+    const src=sTab[sCarry.col];
+    src.splice(src.length-sCarry.count);
+    solFlipTop(sCarry.col);
+  }
+}
+function solAfterFoundation(){
+  const total=solFoundTotal();
+  setHi('sol', total);
+  renderSol();
+  if(total===52){
+    document.getElementById('sol-result').textContent='YOU WIN!';
+    document.getElementById('sol-final').textContent='All 52 cards home';
+    const ov=document.getElementById('sol-over'); ov.classList.add('show');
+    ov.querySelector('.focusable').focus();
+  }
+}
+function solDenyTile(id){ denyEl(document.getElementById(id)); }
+function solDenyCol(ci){ const el=document.querySelectorAll('#sol-tab .scol')[ci]; if(el) denyEl(el); }
+
+function solEnter(){
+  if(sCarry){
+    const ci=sPos-2;
+    if(ci<0) return;
+    const cards=solCarried();
+    if(sCarry.type==='col' && ci===sCarry.col){ sCarry=null; renderSol(); return; }
+    if(!solTabOK(cards,ci)) return solDenyCol(ci);
+    solRemoveCarried();
+    for(const c of cards) sTab[ci].push(c);
+    sCarry=null; sDepth=0;
+    renderSol();
+    return;
+  }
+  if(sPos===0){
+    if(sStock.length){ sWaste.push(sStock.pop()); }
+    else if(sWaste.length){ sStock=sWaste.splice(0).reverse(); }
+    else return solDenyTile('sol-stock');
+    renderSol(); return;
+  }
+  if(sPos===1){
+    if(!sWaste.length) return solDenyTile('sol-waste');
+    const c=sWaste[sWaste.length-1];
+    if(solFoundOK(c)){ sWaste.pop(); sFound[suitIdx(c.s)].push(c); solAfterFoundation(); return; }
+    sCarry={type:'waste'}; sPos=2;
+    renderSol(); return;
+  }
+  const ci=sPos-2, col=sTab[ci];
+  if(!col.length) return solDenyCol(ci);
+  const run=solFaceupRun(col);
+  const depth=Math.min(sDepth, run-1);
+  if(depth===0){
+    const c=col[col.length-1];
+    if(solFoundOK(c)){ col.pop(); sFound[suitIdx(c.s)].push(c); solFlipTop(ci); solAfterFoundation(); return; }
+  }
+  sCarry={type:'col', col:ci, count:depth+1};
+  renderSol();
+}
+
+function solSendCarriedUp(){
+  const cards=solCarried();
+  if(cards.length!==1) return;
+  const c=cards[0];
+  if(!solFoundOK(c)) return solDenyTile('sol-f'+suitIdx(c.s));
+  solRemoveCarried();
+  sFound[suitIdx(c.s)].push(c);
+  sCarry=null;
+  solAfterFoundation();
+}
+
+function renderSol(){
+  // top row
+  const stockEl=document.getElementById('sol-stock');
+  stockEl.textContent = sStock.length ? '▮' : (sWaste.length ? '↻' : '—');
+  const cnt=document.createElement('span'); cnt.className='cnt'; cnt.id='sol-stock-cnt';
+  cnt.textContent=sStock.length; stockEl.appendChild(cnt);
+  stockEl.className='stile'+(!sCarry&&sPos===0?' focus':'');
+  const wasteEl=document.getElementById('sol-waste');
+  if(sWaste.length){
+    const c=sWaste[sWaste.length-1];
+    wasteEl.textContent=cardTxt(c);
+    wasteEl.className='stile '+(isRed(c)?'red':'blk')
+      +(!sCarry&&sPos===1?' focus':'')
+      +(sCarry&&sCarry.type==='waste'?' carry':'');
   } else {
-    help.classList.remove('show');
-    focusGolfCol();
+    wasteEl.textContent='—';
+    wasteEl.className='stile'+(!sCarry&&sPos===1?' focus':'');
   }
-}
-
-function buildGolfCols(){
-  const wrap=document.getElementById('golf-cols');
-  wrap.innerHTML='';
-  for(let i=0;i<7;i++){
-    const b=document.createElement('button');
-    b.className='focusable gcol'; b.dataset.col=i;
-    b.innerHTML='<div class="gcard"></div><div class="count"></div>';
-    b.addEventListener('click', ()=>{ gFocus=i; playGolfCol(i); });
-    wrap.appendChild(b);
-  }
-}
-
-function renderGolf(){
-  document.querySelectorAll('#golf-cols .gcol').forEach((b,i)=>{
-    const col=gCols[i];
-    const cardEl=b.querySelector('.gcard'), cntEl=b.querySelector('.count');
-    b.classList.remove('playable','dead');
-    if(col.length){
-      const c=col[col.length-1];
-      cardEl.textContent=cardTxt(c);
-      cardEl.className='gcard '+(isRed(c)?'red':'blk');
-      cntEl.textContent=col.length+' LEFT';
-      b.classList.add(golfLegal(c)?'playable':'dead');
+  for(let f=0;f<4;f++){
+    const el=document.getElementById('sol-f'+f);
+    const pile=sFound[f];
+    if(pile.length){
+      const c=pile[pile.length-1];
+      el.textContent=cardTxt(c);
+      el.className='stile '+(isRed(c)?'red':'blk');
     } else {
-      cardEl.textContent='—'; cardEl.className='gcard';
-      cntEl.textContent='EMPTY';
-      b.classList.add('dead');
+      el.textContent=SUIT_CHARS[f];
+      el.className='stile';
     }
-  });
-  const top=gWaste[gWaste.length-1];
-  const wasteEl=document.getElementById('golf-waste');
-  wasteEl.textContent=cardTxt(top);
-  wasteEl.className='gcard big '+(isRed(top)?'red':'blk');
-  // Spell out the legal ranks — "PLAY 6 or 8" beats "±1".
-  const lo=top.r===1?13:top.r-1, hi=top.r===13?1:top.r+1;
-  document.getElementById('golf-waste-hint').textContent=
-    'PLAY '+RANK_CHARS[lo-1]+' or '+RANK_CHARS[hi-1];
-  // Nothing playable? Pulse the stock so the next move is obvious.
-  const stuck=!golfAnyLegal() && gStock.length>0;
-  document.getElementById('golf-stock-tile').classList.toggle('nudge', stuck);
-  document.getElementById('golf-stock-count').textContent=
-    (stuck?'DRAW · ':'STOCK ')+gStock.length;
-  document.getElementById('golf-stock-card').textContent=gStock.length?'▮':'—';
-  document.getElementById('golf-score').textContent=gScore;
-}
-
-function golfLegal(c){
-  const top=gWaste[gWaste.length-1];
-  const d=Math.abs(c.r-top.r);
-  return d===1 || d===12;
-}
-function golfAnyLegal(){ return gCols.some(col=> col.length && golfLegal(col[col.length-1])); }
-
-function playGolfCol(i){
-  const btn=document.querySelectorAll('#golf-cols .gcol')[i];
-  const col=gCols[i];
-  if(!col.length){ denyEl(btn); return; }
-  const c=col[col.length-1];
-  if(!golfLegal(c)){ denyEl(btn); return; }
-  col.pop(); gWaste.push(c); gScore++;
-  renderGolf();
-  if(gCols.every(cl=>cl.length===0)) return golfEnd(true);
-  if(!gStock.length && !golfAnyLegal()) return golfEnd(false);
-}
-
-function golfDraw(){
-  if(gStock.length){
-    gWaste.push(gStock.pop());
-    renderGolf();
-    if(!gStock.length && !golfAnyLegal()) golfEnd(false);
-  } else {
-    denyEl(document.getElementById('golf-stock-tile'));
   }
+  // tableau
+  const tab=document.getElementById('sol-tab');
+  tab.innerHTML='';
+  sTab.forEach((col,ci)=>{
+    const cEl=document.createElement('div');
+    cEl.className='scol'+(sPos-2===ci?' focus':'');
+    const run=solFaceupRun(col);
+    const effDepth=Math.min(sDepth, Math.max(0,run-1));
+    // offsets, compressed if the pile would overflow the stage
+    let upOff=20; const downs=col.length-run;
+    const projected=downs*8+(run>1?(run-1)*upOff:0)+76;
+    if(projected>320 && run>1) upOff=Math.max(10, Math.floor((320-76-downs*8)/(run-1)));
+    let y=0;
+    col.forEach((card,i)=>{
+      const d=document.createElement('div');
+      if(!card.up){ d.className='scard down'; d.textContent='▮'; }
+      else {
+        d.className='scard '+(isRed(card)?'red':'blk');
+        d.textContent=cardTxt(card);
+        const fromTop=col.length-1-i;
+        if(!sCarry && sPos-2===ci && fromTop<=effDepth) d.classList.add('sel');
+        if(sCarry && sCarry.type==='col' && sCarry.col===ci && fromTop<sCarry.count) d.classList.add('carry');
+      }
+      d.style.top=y+'px';
+      y += card.up? upOff : 8;
+      cEl.appendChild(d);
+    });
+    cEl.style.height=Math.max(80, y-(col.length? (col[col.length-1].up?upOff:8):0)+76)+'px';
+    cEl.addEventListener('click', ()=>{ if(!sCarry){ sPos=2+ci; sDepth=0; } else { sPos=2+ci; } solEnter(); });
+    tab.appendChild(cEl);
+  });
+  document.getElementById('sol-msg').textContent = sCarry
+    ? ('CARRYING '+solCarried().length+' · PINCH drops · origin cancels · UP sends home')
+    : 'PINCH grabs · ready cards fly up on their own';
+  document.getElementById('sol-score').textContent=solFoundTotal();
 }
+document.getElementById('sol-stock').addEventListener('click', ()=>{ if(!sCarry){ sPos=0; solEnter(); } });
+document.getElementById('sol-waste').addEventListener('click', ()=>{ if(!sCarry){ sPos=1; solEnter(); } });
 
-function focusGolfCol(){
-  const btns=document.querySelectorAll('#golf-cols .gcol');
-  if(btns[gFocus]) btns[gFocus].focus();
-}
-
-function golfEnd(win){
-  setHi('golf', gScore);
-  document.getElementById('golf-result').textContent = win?'CLEARED!':'NO MOVES';
-  document.getElementById('golf-final').textContent = 'Cards '+gScore+'/35';
-  const ov=document.getElementById('golf-over'); ov.classList.add('show');
-  ov.querySelector('.focusable').focus();
-}
-
-handlers.golf = key=>{
-  const help=document.getElementById('golf-help');
+handlers.sol = key=>{
+  const help=document.getElementById('sol-help');
   if(help.classList.contains('show')){ listNav(help,key); return; }
-  const ov=document.getElementById('golf-over');
+  const ov=document.getElementById('sol-over');
   if(ov.classList.contains('show')){ listNav(ov,key); return; }
-  if(key===DPAD.LEFT){ gFocus=(gFocus+6)%7; focusGolfCol(); }
-  if(key===DPAD.RIGHT){ gFocus=(gFocus+1)%7; focusGolfCol(); }
-  if(key===DPAD.SELECT) playGolfCol(gFocus);
-  if(key===DPAD.DOWN || key===DPAD.UP) golfDraw();
+  if(key===DPAD.SELECT){ solEnter(); return; }
+  if(sCarry){
+    if(key===DPAD.LEFT){ sPos = (sPos<=2)? 8 : sPos-1; renderSol(); }
+    if(key===DPAD.RIGHT){ sPos = (sPos>=8)? 2 : sPos+1; renderSol(); }
+    if(key===DPAD.UP) solSendCarriedUp();
+    return;
+  }
+  if(key===DPAD.LEFT){ sPos=(sPos+8)%9; sDepth=0; renderSol(); }
+  if(key===DPAD.RIGHT){ sPos=(sPos+1)%9; sDepth=0; renderSol(); }
+  if((key===DPAD.UP || key===DPAD.DOWN) && sPos>=2){
+    const run=solFaceupRun(sTab[sPos-2]);
+    if(key===DPAD.UP) sDepth=Math.min(sDepth+1, Math.max(0,run-1));
+    else sDepth=Math.max(0, sDepth-1);
+    renderSol();
+  }
 };
 
 /* ============================================================
@@ -1305,6 +1438,217 @@ handlers.trivia = key=>{
   if(!quizOn){ gridNav(document.getElementById('trivia-themes'), key, 2); return; }
   if(key===DPAD.SELECT){ document.activeElement.click(); return; }
   listNav(document.getElementById('trivia-answers'), key);
+};
+
+/* ============================================================
+   GLASS TRAIL  (Oregon-Trail-like: 2000 miles, manage food,
+   meds, parts, and a party of four. Travel, hunt, rest; survive
+   the random events. Fatigue raises event odds — rest clears it.)
+   ============================================================ */
+const TRAIL_NAMES=['MAE','OTIS','RUBY','GUS'];
+let tMiles,tDay,tFood,tMeds,tParts,tParty,tFatigue,tPhase,tHuntT,tHuntRound,tHuntHits,tHuntKey,tCause;
+
+function startTrail(){
+  document.getElementById('trail-over').classList.remove('show');
+  clearTimeout(tHuntT);
+  tMiles=0; tDay=1; tFood=120; tMeds=2; tParts=2;
+  tParty=TRAIL_NAMES.slice(); tFatigue=0; tPhase='camp'; tCause='';
+  document.getElementById('trail-hunt').style.display='none';
+  logT('The wagon is loaded. 2000 miles to the valley.');
+  renderTrail(); buildCampActions();
+}
+function stopTrail(){ clearTimeout(tHuntT); }
+function logT(html){ document.getElementById('trail-log').innerHTML=html; }
+
+function renderTrail(){
+  document.getElementById('trail-stats').textContent=
+    'MILES '+tMiles+'/2000 · DAY '+tDay+' · FOOD '+tFood+' · MEDS '+tMeds+' · PARTS '+tParts;
+  const mood=['CALM','STEADY','WEARY','SPENT'][Math.min(tFatigue,3)];
+  document.getElementById('trail-party').textContent=
+    'PARTY '+(tParty.length?tParty.join(' '):'—')+' · TEAM '+mood;
+  document.getElementById('trail-miles').textContent=tMiles+' MI';
+}
+
+function setTrailActions(items){
+  const wrap=document.getElementById('trail-actions');
+  wrap.innerHTML='';
+  items.forEach(it=>{
+    const b=document.createElement('button');
+    b.className='focusable trail-btn';
+    b.textContent=it.l;
+    b.addEventListener('click', it.f);
+    wrap.appendChild(b);
+  });
+  const first=wrap.querySelector('.focusable');
+  if(first) first.focus();
+}
+function buildCampActions(){
+  setTrailActions([
+    {l:'⇢ TRAVEL', f:doTravel},
+    {l:'✛ HUNT · costs a day', f:startHunt},
+    {l:'☾ REST · steadies the team', f:doRest},
+  ]);
+}
+
+function killMember(name){
+  const i=tParty.indexOf(name);
+  if(i>=0) tParty.splice(i,1);
+  renderTrail();
+  if(!tParty.length){ trailEnd(false); return true; }
+  return false;
+}
+
+function doTravel(){
+  tDay++; tFatigue++;
+  tFood-=8;
+  const gain=45+((Math.random()*46)|0);
+  tMiles+=gain;
+  if(tMiles>=2000){ tMiles=2000; return trailEnd(true); }
+  if(tFood<=0){
+    const who=tParty[(Math.random()*tParty.length)|0];
+    tCause=who+' STARVED';
+    tFood=10;
+    logT(who+' starved on the trail.<br>You forage enough to keep moving.');
+    if(killMember(who)) return;
+    renderTrail(); buildCampActions(); return;
+  }
+  const chance=0.30+tFatigue*0.08;
+  if(Math.random()<chance){ fireTrailEvent(gain); }
+  else { logT('Made '+gain+' miles. Quiet day on the trail.'); renderTrail(); buildCampActions(); }
+}
+
+function doRest(){
+  tDay++; tFood=Math.max(0,tFood-8); tFatigue=0;
+  if(Math.random()<0.2){ tFood+=15; logT('A day of rest. Found berry bushes: +15 food.'); }
+  else logT('A day of rest. The team is steady again.');
+  renderTrail(); buildCampActions();
+}
+
+function resolveTrail(effect){
+  effect();
+  if(tPhase==='end') return;
+  tPhase='camp';
+  renderTrail(); buildCampActions();
+}
+
+function fireTrailEvent(gain){
+  tPhase='event';
+  const roll=(Math.random()*5)|0;
+  if(roll===0){
+    logT('Made '+gain+' miles — then a wide river blocks the trail.');
+    setTrailActions([
+      {l:'FORD IT', f:()=>resolveTrail(()=>{
+        if(Math.random()<0.4){ tFood=Math.max(0,tFood-20); logT('The wagon took on water. −20 food.'); }
+        else logT('You forded it clean. Not a barrel lost.');
+      })},
+      {l:'WAIT A DAY', f:()=>resolveTrail(()=>{
+        tDay++; tFood=Math.max(0,tFood-8);
+        logT('You waited for low water and crossed easily.');
+      })},
+    ]);
+  } else if(roll===1){
+    logT('CRACK — the wagon axle snapped at mile '+tMiles+'.');
+    setTrailActions([
+      {l:'USE A SPARE PART', f:()=>resolveTrail(()=>{
+        if(tParts>0){ tParts--; logT('Fixed with a spare part. Rolling again.'); }
+        else { tDay+=3; tFood=Math.max(5,tFood-20); logT('No parts left! Lost 3 days rigging a fix.'); }
+      })},
+      {l:'LIMP ALONG', f:()=>resolveTrail(()=>{
+        tDay+=2; tFood=Math.max(0,tFood-12);
+        logT('You limped along the ruts for two slow days.');
+      })},
+    ]);
+  } else if(roll===2){
+    const who=tParty[(Math.random()*tParty.length)|0];
+    logT(who+' has dysentery.');
+    setTrailActions([
+      {l:'USE MEDICINE', f:()=>resolveTrail(()=>{
+        if(tMeds>0){ tMeds--; logT(who+' recovered by morning.'); }
+        else if(Math.random()<0.5){ tCause=who+' DIED OF DYSENTERY'; logT(who+' died of dysentery.'); killMember(who); }
+        else logT('No medicine left… but '+who+' pulled through.');
+      })},
+      {l:'TOUGH IT OUT', f:()=>resolveTrail(()=>{
+        if(Math.random()<0.5){ tCause=who+' DIED OF DYSENTERY'; logT(who+' died of dysentery.'); killMember(who); }
+        else logT(who+' pulled through the night.');
+      })},
+    ]);
+  } else if(roll===3){
+    logT('Bandits ride up, demanding supplies.');
+    setTrailActions([
+      {l:'PAY THEM OFF', f:()=>resolveTrail(()=>{
+        tFood=Math.max(0,tFood-25); logT('They took 25 food and rode off laughing.');
+      })},
+      {l:'STAND YOUR GROUND', f:()=>resolveTrail(()=>{
+        if(Math.random()<0.5){ tFood+=10; logT('You scared them off — they dropped a sack. +10 food.'); }
+        else { tFood=Math.max(0,tFood-30); tMeds=Math.max(0,tMeds-1); logT('They ransacked the wagon. −30 food, −1 meds.'); }
+      })},
+    ]);
+  } else {
+    logT('An abandoned wagon sits just off the trail.');
+    setTrailActions([
+      {l:'SEARCH IT', f:()=>resolveTrail(()=>{
+        if(Math.random()<0.5){ tFood+=30; logT('Barrels of preserves inside! +30 food.'); }
+        else { tParts++; logT('A sound spare axle! +1 parts.'); }
+      })},
+      {l:'MOVE ON', f:()=>resolveTrail(()=>{ logT('You kept your distance. Some wagons stay quiet for a reason.'); })},
+    ]);
+  }
+}
+
+function startHunt(){
+  tPhase='hunt'; tDay++; tHuntRound=0; tHuntHits=0;
+  setTrailActions([]);
+  document.getElementById('trail-hunt').style.display='block';
+  logT('Hunting… match the arrow, fast. 3 shots.');
+  nextHuntPrompt();
+}
+function nextHuntPrompt(){
+  if(tHuntRound>=3){
+    const gained=tHuntHits*25;
+    tFood+=gained;
+    document.getElementById('trail-hunt').style.display='none';
+    logT('Hunt over: '+tHuntHits+'/3 hits, +'+gained+' food.');
+    tPhase='camp'; renderTrail(); buildCampActions();
+    return;
+  }
+  tHuntKey=(Math.random()*4)|0;
+  document.getElementById('trail-hunt').textContent=zoneGlyph[tHuntKey];
+  clearTimeout(tHuntT);
+  tHuntT=setTimeout(()=>{ tHuntRound++; nextHuntPrompt(); },1500);
+}
+function judgeHunt(z){
+  clearTimeout(tHuntT);
+  if(z===tHuntKey) tHuntHits++;
+  tHuntRound++;
+  nextHuntPrompt();
+}
+
+function trailEnd(win){
+  tPhase='end';
+  clearTimeout(tHuntT);
+  document.getElementById('trail-hunt').style.display='none';
+  const score = win
+    ? tMiles+tFood+tMeds*20+tParts*20+tParty.length*100-tDay*2
+    : tMiles;
+  setHi('trail', Math.max(0,score));
+  document.getElementById('trail-result').textContent = win?'THE VALLEY!':'THE TRAIL WINS';
+  document.getElementById('trail-final').textContent = win
+    ? 'Day '+tDay+' · '+tParty.length+' alive · Score '+score
+    : (tCause? tCause+' · ':'')+'Made '+tMiles+' miles · Score '+score;
+  const ov=document.getElementById('trail-over'); ov.classList.add('show');
+  ov.querySelector('.focusable').focus();
+}
+
+handlers.trail = key=>{
+  const ov=document.getElementById('trail-over');
+  if(ov.classList.contains('show')){ listNav(ov,key); return; }
+  if(tPhase==='hunt'){
+    const z={ArrowUp:0,ArrowRight:1,ArrowDown:2,ArrowLeft:3}[key];
+    if(z!==undefined) judgeHunt(z);
+    return;
+  }
+  if(key===DPAD.SELECT){ document.activeElement.click(); return; }
+  listNav(document.getElementById('trail-actions'), key);
 };
 
 </script>
