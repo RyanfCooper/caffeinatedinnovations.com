@@ -70,6 +70,14 @@ a {
   white-space: nowrap;
 }
 
+.brand-mark {
+  display: block;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+
 nav {
   display: flex;
   align-items: center;

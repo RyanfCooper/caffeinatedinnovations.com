@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Wide Awake mark — Caffeinated Innovations.
+       green #13674c · paper #fbfcf8 · pupils #0b3d2f + #1f5d8f -->
+  <circle cx="32" cy="32" r="32" fill="#13674c"/>
+  <circle cx="21.5" cy="29" r="9.8" fill="#fbfcf8"/>
+  <circle cx="42.5" cy="29" r="9.8" fill="#fbfcf8"/>
+  <circle cx="21.5" cy="29" r="4.8" fill="#0b3d2f"/>
+  <circle cx="42.5" cy="29" r="4.8" fill="#1f5d8f"/>
+</svg>
