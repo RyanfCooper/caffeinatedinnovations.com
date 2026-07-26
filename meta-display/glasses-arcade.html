@@ -170,6 +170,15 @@
   .gcol .count { font-size: 12px; color: var(--dim); letter-spacing: 1px; }
   .gcol:focus { border-color: var(--focus); }
   .gcol:focus .gcard { border-color: var(--focus); box-shadow: 0 0 20px rgba(0,229,255,.35); }
+  /* Playable piles glow lime; dead piles fade — the legality math is done
+     for the player, at a glance. */
+  .gcol.playable { border-color: rgba(109,255,90,.55); }
+  .gcol.dead .gcard { opacity: .4; }
+  @keyframes stockpulse {
+    0%,100% { box-shadow: 0 0 6px rgba(0,229,255,.2); }
+    50% { box-shadow: 0 0 26px rgba(0,229,255,.7); }
+  }
+  #golf-stock-tile.nudge .gcard { animation: stockpulse 1.1s ease infinite; border-color: var(--cyan); color: var(--cyan); }
   #golf-base { display: flex; gap: 28px; justify-content: center; align-items: flex-start; }
   @keyframes deny { 0%,100%{ transform: translateX(0);} 25%{ transform: translateX(-6px);} 75%{ transform: translateX(6px);} }
   .deny { animation: deny 180ms ease; }
@@ -352,7 +361,7 @@
 
   <!-- ===== GOLF SOLITAIRE ===== -->
   <section id="golf" class="screen">
-    <div class="game-head"><span class="game-name">Solitaire</span><span class="score" id="golf-score">0</span></div>
+    <div class="game-head"><span class="game-name">Golf Solitaire</span><span class="score" id="golf-score">0</span></div>
     <div class="stage">
       <div id="golf-wrap">
         <div id="golf-cols"></div>
@@ -363,12 +372,19 @@
           </div>
           <div class="gcol">
             <div class="gcard big" id="golf-waste">—</div>
-            <div class="count">WASTE · PLAY ±1</div>
+            <div class="count" id="golf-waste-hint">PLAY ±1</div>
           </div>
         </div>
       </div>
     </div>
-    <div class="hint">LEFT/RIGHT pick a pile · PINCH plays · DOWN draws</div>
+    <div class="hint">Bright piles are playable · PINCH plays · DOWN draws</div>
+    <div class="overlay" id="golf-help">
+      <div class="big">GOLF SOLITAIRE</div>
+      <div class="sub">Clear all 35 cards from the 7 piles.</div>
+      <div class="sub">Play any pile exactly ONE rank above or<br>below the waste card. A and K wrap.</div>
+      <div class="sub">Bright piles are playable · DOWN draws a card</div>
+      <button class="focusable btn" data-act="golf-begin">▶ Play</button>
+    </div>
     <div class="overlay" id="golf-over">
       <div class="big" id="golf-result">NO MOVES</div>
       <div class="sub" id="golf-final">Cards 0/35</div>
@@ -512,6 +528,10 @@ document.querySelectorAll('[data-act]').forEach(btn=>{
     else if(a==='react-retry'){ startReact(); }
     else if(a==='runner-retry'){ startRunner(); }
     else if(a==='golf-retry'){ startGolf(); }
+    else if(a==='golf-begin'){
+      document.getElementById('golf-help').classList.remove('show');
+      focusGolfCol();
+    }
     else if(a==='bj-retry'){ startBJ(); }
     else if(a==='trivia-retry'){ startTrivia(); }
   });
@@ -523,7 +543,7 @@ function launch(game){
   if(game==='simon'){ show('simon'); startSimon(); }
   if(game==='react'){ show('react'); startReact(); }
   if(game==='runner'){ show('runner'); startRunner(); }
-  if(game==='golf'){ show('golf'); startGolf(); }
+  if(game==='golf'){ show('golf'); startGolf(true); }
   if(game==='bj'){ show('bj'); startBJ(); }
   if(game==='trivia'){ show('trivia'); startTrivia(); }
 }
@@ -923,12 +943,20 @@ handlers.runner = key=>{
    ============================================================ */
 let gCols, gStock, gWaste, gScore, gFocus;
 
-function startGolf(){
+function startGolf(showHelp){
   document.getElementById('golf-over').classList.remove('show');
   const deck=mkDeck();
   gCols=[]; for(let i=0;i<7;i++) gCols.push(deck.splice(0,5));
   gWaste=[deck.pop()]; gStock=deck; gScore=0; gFocus=3;
-  buildGolfCols(); renderGolf(); focusGolfCol();
+  buildGolfCols(); renderGolf();
+  const help=document.getElementById('golf-help');
+  if(showHelp){
+    help.classList.add('show');
+    help.querySelector('.focusable').focus();
+  } else {
+    help.classList.remove('show');
+    focusGolfCol();
+  }
 }
 
 function buildGolfCols(){
@@ -947,21 +975,32 @@ function renderGolf(){
   document.querySelectorAll('#golf-cols .gcol').forEach((b,i)=>{
     const col=gCols[i];
     const cardEl=b.querySelector('.gcard'), cntEl=b.querySelector('.count');
+    b.classList.remove('playable','dead');
     if(col.length){
       const c=col[col.length-1];
       cardEl.textContent=cardTxt(c);
       cardEl.className='gcard '+(isRed(c)?'red':'blk');
       cntEl.textContent=col.length+' LEFT';
+      b.classList.add(golfLegal(c)?'playable':'dead');
     } else {
       cardEl.textContent='—'; cardEl.className='gcard';
       cntEl.textContent='EMPTY';
+      b.classList.add('dead');
     }
   });
   const top=gWaste[gWaste.length-1];
   const wasteEl=document.getElementById('golf-waste');
   wasteEl.textContent=cardTxt(top);
   wasteEl.className='gcard big '+(isRed(top)?'red':'blk');
-  document.getElementById('golf-stock-count').textContent='STOCK '+gStock.length;
+  // Spell out the legal ranks — "PLAY 6 or 8" beats "±1".
+  const lo=top.r===1?13:top.r-1, hi=top.r===13?1:top.r+1;
+  document.getElementById('golf-waste-hint').textContent=
+    'PLAY '+RANK_CHARS[lo-1]+' or '+RANK_CHARS[hi-1];
+  // Nothing playable? Pulse the stock so the next move is obvious.
+  const stuck=!golfAnyLegal() && gStock.length>0;
+  document.getElementById('golf-stock-tile').classList.toggle('nudge', stuck);
+  document.getElementById('golf-stock-count').textContent=
+    (stuck?'DRAW · ':'STOCK ')+gStock.length;
   document.getElementById('golf-stock-card').textContent=gStock.length?'▮':'—';
   document.getElementById('golf-score').textContent=gScore;
 }
@@ -1009,6 +1048,8 @@ function golfEnd(win){
 }
 
 handlers.golf = key=>{
+  const help=document.getElementById('golf-help');
+  if(help.classList.contains('show')){ listNav(help,key); return; }
   const ov=document.getElementById('golf-over');
   if(ov.classList.contains('show')){ listNav(ov,key); return; }
   if(key===DPAD.LEFT){ gFocus=(gFocus+6)%7; focusGolfCol(); }
